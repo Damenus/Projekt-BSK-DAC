@@ -12,9 +12,12 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        DBConnection connection;
+
+        public Form1(DBConnection con)
         {
             InitializeComponent();
+            connection = con;
         }
 
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -24,7 +27,17 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            
+        }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            
         }
     }
 }

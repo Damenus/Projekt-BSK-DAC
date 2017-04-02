@@ -28,7 +28,7 @@ namespace WindowsFormsApplication1
                 return;
             }
             //moja klasa do łączenia się z bazą danych
-            DBConnection com;
+            DBConnection connection;
 
             try
             {
@@ -37,13 +37,13 @@ namespace WindowsFormsApplication1
                 //var result = sha.ComputeHash();
 
                 //stworzenie obiektu i łączenie się z bazą
-                com = new DBConnection(textBoxLogin.Text, textBoxPassword.Text);
-                com.IsConnect();
+                connection = new DBConnection(textBoxLogin.Text, textBoxPassword.Text);
+                connection.IsConnect();
 
                 //ukrycie ekranu logowania i pokazanie głównego menu
                 this.Hide();
                 MessageBox.Show("Login Successful!");
-                Form1 form = new Form1();
+                Form1 form = new Form1(connection);
                 form.Show();
 
             }
