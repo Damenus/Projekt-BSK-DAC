@@ -51,8 +51,10 @@
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
+            this.dataGridView3 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -62,7 +64,7 @@
             this.TableID});
             this.dataGridView1.Location = new System.Drawing.Point(0, 55);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(143, 163);
+            this.dataGridView1.Size = new System.Drawing.Size(146, 163);
             this.dataGridView1.TabIndex = 0;
             // 
             // TableID
@@ -252,11 +254,21 @@
             this.checkBox9.Text = "Przejmij";
             this.checkBox9.UseVisualStyleBackColor = true;
             // 
+            // dataGridView3
+            // 
+            this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView3.Location = new System.Drawing.Point(561, 259);
+            this.dataGridView3.Name = "dataGridView3";
+            this.dataGridView3.Size = new System.Drawing.Size(240, 150);
+            this.dataGridView3.TabIndex = 20;
+            this.dataGridView3.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView3_CellContentClick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(858, 441);
+            this.Controls.Add(this.dataGridView3);
             this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.checkBox8);
@@ -279,6 +291,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -309,6 +322,7 @@
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox9;
+        private System.Windows.Forms.DataGridView dataGridView3;
     }
 }
 

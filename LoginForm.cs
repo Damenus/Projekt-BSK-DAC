@@ -22,11 +22,11 @@ namespace WindowsFormsApplication1
         private void button1_Click(object sender, EventArgs e)
         {
             //sprawdzenie czy jest login i hasło ?sprawdzenie czy nie ma SQLinjesction
-            if (textBoxLogin.Text == "" || textBoxPassword.Text == "")
-            {
-                MessageBox.Show("Please provide UserName and Password");
-                return;
-            }
+            //if (textBoxLogin.Text == "" || textBoxPassword.Text == "")
+            //{
+            //    MessageBox.Show("Please provide UserName and Password");
+            //    return;
+            //}
             //moja klasa do łączenia się z bazą danych
             DBConnection connection;
 
@@ -42,9 +42,9 @@ namespace WindowsFormsApplication1
 
                 //ukrycie ekranu logowania i pokazanie głównego menu
                 this.Hide();
-                MessageBox.Show("Login Successful!");
+                //MessageBox.Show("Login Successful!");
                 Form1 form = new Form1(connection);
-                form.Show();
+                form.Show();                
 
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
