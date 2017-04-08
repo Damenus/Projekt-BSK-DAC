@@ -52,6 +52,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -257,11 +258,18 @@
             // dataGridView3
             // 
             this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView3.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1});
             this.dataGridView3.Location = new System.Drawing.Point(561, 259);
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.Size = new System.Drawing.Size(240, 150);
             this.dataGridView3.TabIndex = 20;
             this.dataGridView3.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView3_CellContentClick);
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "Column1";
+            this.Column1.Name = "Column1";
             // 
             // Form1
             // 
@@ -323,6 +331,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
     }
 }
 

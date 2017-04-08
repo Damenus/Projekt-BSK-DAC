@@ -89,12 +89,55 @@ namespace WindowsFormsApplication1
                 {
                     list.Add(myReader.GetString(0));
                 }
+                myReader.Close();
+            }
+
+            return list;
+        }
+
+        //będę pobierał wszystkie dane o uprawnieniach i wrzucał w obiekty
+        //SELECT * from information_schema.TABLE_PRIVILEGES
+        public List<Grantee> GetTablePrivileges(String tableName)
+        {
+            List<Grantee> list = new List<Grantee>();
+
+            if (this.IsConnect() == true)
+            {
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
+
+                MySqlDataReader myReader = cmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    String userName = myReader.GetString(0);
+                    String privilegeType = myReader.GetString(1);
+                    String isGrantable = myReader.GetString(2);
+
+                    //czy istnieje już taki
+                    if (list.Exists(x => x.UserName == userName))
+                    {
+                        list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable);
+                    }
+                    else //utworz jak nie istnieje
+                    {
+                        list.Add(new Grantee(userName, privilegeType, isGrantable));
+                    }
+                }
             }
 
             return list;
         }
 
         //SELECT * FROM mysql.db WHERE Db = 'bsk'
+        //GRANT UPDATE ON bsk.user TO damian@localhost
+
+        //SELECT * FROM `db`
+        //show tabels
+
+        //show grants for 'user'@'host'
+        /*SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges;
+SELECT User,Host,Db FROM mysql.db;*/
        
         //taki tam przykłąd
         public void Select(string filename)

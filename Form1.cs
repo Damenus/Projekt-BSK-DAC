@@ -28,6 +28,12 @@ namespace WindowsFormsApplication1
                 dataGridView1.Rows.Add(tabel);
             }
 
+            var list2 = connection.GetTablePrivileges("user");
+            foreach (var tabel in list2)
+            {
+                dataGridView3.Rows.Add(tabel.UserName);
+            }
+
         //    String a = "select host, user, password from mysql.user;";
 
         //    List<String> myCars = new List<String>{
