@@ -33,6 +33,15 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Select = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SelectIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Insert = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.InsertIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Delete = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeleteIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Update = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UpdateIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label5 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -45,28 +54,23 @@
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
-            this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Select = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SelectIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Insert = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.InsertIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Delete = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DeleteIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Update = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.UpdateIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TableID});
             this.dataGridView1.Location = new System.Drawing.Point(0, 55);
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(146, 163);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
             // TableID
             // 
@@ -106,9 +110,63 @@
             this.UpdateIsGrantable});
             this.dataGridView2.Location = new System.Drawing.Point(189, 55);
             this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.ReadOnly = true;
             this.dataGridView2.Size = new System.Drawing.Size(945, 163);
             this.dataGridView2.TabIndex = 3;
-            this.dataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
+            // 
+            // Login
+            // 
+            this.Login.HeaderText = "Login";
+            this.Login.Name = "Login";
+            this.Login.ReadOnly = true;
+            // 
+            // Select
+            // 
+            this.Select.HeaderText = "Select";
+            this.Select.Name = "Select";
+            this.Select.ReadOnly = true;
+            // 
+            // SelectIsGrantable
+            // 
+            this.SelectIsGrantable.HeaderText = "SelectIsGrantable";
+            this.SelectIsGrantable.Name = "SelectIsGrantable";
+            this.SelectIsGrantable.ReadOnly = true;
+            // 
+            // Insert
+            // 
+            this.Insert.HeaderText = "Insert";
+            this.Insert.Name = "Insert";
+            this.Insert.ReadOnly = true;
+            // 
+            // InsertIsGrantable
+            // 
+            this.InsertIsGrantable.HeaderText = "InsertIsGrantable";
+            this.InsertIsGrantable.Name = "InsertIsGrantable";
+            this.InsertIsGrantable.ReadOnly = true;
+            // 
+            // Delete
+            // 
+            this.Delete.HeaderText = "Delete";
+            this.Delete.Name = "Delete";
+            this.Delete.ReadOnly = true;
+            // 
+            // DeleteIsGrantable
+            // 
+            this.DeleteIsGrantable.HeaderText = "DeleteIsGrantable";
+            this.DeleteIsGrantable.Name = "DeleteIsGrantable";
+            this.DeleteIsGrantable.ReadOnly = true;
+            // 
+            // Update
+            // 
+            this.Update.HeaderText = "Update";
+            this.Update.Name = "Update";
+            this.Update.ReadOnly = true;
+            // 
+            // UpdateIsGrantable
+            // 
+            this.UpdateIsGrantable.HeaderText = "UpdateIsGrantable";
+            this.UpdateIsGrantable.Name = "UpdateIsGrantable";
+            this.UpdateIsGrantable.ReadOnly = true;
             // 
             // label5
             // 
@@ -227,60 +285,6 @@
             this.checkBox9.TabIndex = 19;
             this.checkBox9.Text = "Przejmij";
             this.checkBox9.UseVisualStyleBackColor = true;
-            // 
-            // Login
-            // 
-            this.Login.HeaderText = "Login";
-            this.Login.Name = "Login";
-            this.Login.ReadOnly = true;
-            // 
-            // Select
-            // 
-            this.Select.HeaderText = "Select";
-            this.Select.Name = "Select";
-            this.Select.ReadOnly = true;
-            // 
-            // SelectIsGrantable
-            // 
-            this.SelectIsGrantable.HeaderText = "SelectIsGrantable";
-            this.SelectIsGrantable.Name = "SelectIsGrantable";
-            this.SelectIsGrantable.ReadOnly = true;
-            // 
-            // Insert
-            // 
-            this.Insert.HeaderText = "Insert";
-            this.Insert.Name = "Insert";
-            this.Insert.ReadOnly = true;
-            // 
-            // InsertIsGrantable
-            // 
-            this.InsertIsGrantable.HeaderText = "InsertIsGrantable";
-            this.InsertIsGrantable.Name = "InsertIsGrantable";
-            this.InsertIsGrantable.ReadOnly = true;
-            // 
-            // Delete
-            // 
-            this.Delete.HeaderText = "Delete";
-            this.Delete.Name = "Delete";
-            this.Delete.ReadOnly = true;
-            // 
-            // DeleteIsGrantable
-            // 
-            this.DeleteIsGrantable.HeaderText = "DeleteIsGrantable";
-            this.DeleteIsGrantable.Name = "DeleteIsGrantable";
-            this.DeleteIsGrantable.ReadOnly = true;
-            // 
-            // Update
-            // 
-            this.Update.HeaderText = "Update";
-            this.Update.Name = "Update";
-            this.Update.ReadOnly = true;
-            // 
-            // UpdateIsGrantable
-            // 
-            this.UpdateIsGrantable.HeaderText = "UpdateIsGrantable";
-            this.UpdateIsGrantable.Name = "UpdateIsGrantable";
-            this.UpdateIsGrantable.ReadOnly = true;
             // 
             // Form1
             // 

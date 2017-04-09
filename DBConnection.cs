@@ -124,6 +124,9 @@ namespace WindowsFormsApplication1
                         list.Add(new Grantee(userName, privilegeType, isGrantable));
                     }
                 }
+
+                myReader.Close();
+
             }
 
             return list;

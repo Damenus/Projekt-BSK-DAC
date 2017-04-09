@@ -50,11 +50,6 @@ namespace WindowsFormsApplication1
 
         }
 
-        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
           
@@ -70,9 +65,18 @@ namespace WindowsFormsApplication1
             connection.Close();
         }
 
-        private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            dataGridView2.Rows.Clear();
+            dataGridView2.Refresh();
 
+            var d = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
+            var list2 = connection.GetTablePrivileges(d);
+            foreach (var tabel in list2)
+            {
+                dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+            }
         }
+
     }
 }
