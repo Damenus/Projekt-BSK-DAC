@@ -57,24 +57,28 @@ namespace WindowsFormsApplication1
 
         public void SetPrivileges(String privileges, String grantable)
         {
+            //zamian YES/NO na true/false
             bool value = (grantable == "YES") ? true : false;
 
-            if (privileges == "Select")
+            //same wiellkie litery
+            privileges = privileges.ToUpper();
+
+            if (privileges == "SELECT")
             {
                 this.Select = true;
                 this.SelectIsGrantable = value;
             }
-            else if (privileges == "Update")
+            else if (privileges == "UPDATE")
             {
                 this.Update = true;
                 this.UpdateIsGrantable = value;
             }
-            else if (privileges == "Delete")
+            else if (privileges == "DELETE")
             {
                 this.Delete = true;
                 this.DeleteIsGrantable = value;
             }
-            else if (privileges == "Insert")
+            else if (privileges == "INSERT")
             {
                 this.Insert = true;
                 this.InsertIsGrantable = value;

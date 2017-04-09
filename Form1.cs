@@ -31,7 +31,7 @@ namespace WindowsFormsApplication1
             var list2 = connection.GetTablePrivileges("user");
             foreach (var tabel in list2)
             {
-                dataGridView3.Rows.Add(tabel.UserName);
+                dataGridView2.Rows.Add(tabel.UserName,tabel.Select,tabel.SelectIsGrantable,tabel.Insert,tabel.InsertIsGrantable,tabel.Delete,tabel.DeleteIsGrantable,tabel.Update,tabel.UpdateIsGrantable);
             }
 
         //    String a = "select host, user, password from mysql.user;";
