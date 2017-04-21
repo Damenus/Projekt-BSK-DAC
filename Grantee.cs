@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WindowsFormsApplication1
-{
+{   //trzymanie informacji o uprawnieniach, by móc łatwo wyświetlić
     public class Grantee
     {
         public Grantee(String name) 

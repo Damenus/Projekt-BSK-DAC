@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+// <------------------------------------------------ skopiowane z naszej laborki o gridview - niedziała
 namespace WindowsFormsApplication1
 {
     class SortableBindingList<T> : BindingList<T>

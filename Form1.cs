@@ -28,26 +28,6 @@ namespace WindowsFormsApplication1
                 dataGridView1.Rows.Add(tabel);
             }
 
-            var list2 = connection.GetTablePrivileges("user");
-            foreach (var tabel in list2)
-            {
-                dataGridView2.Rows.Add(tabel.UserName,tabel.Select,tabel.SelectIsGrantable,tabel.Insert,tabel.InsertIsGrantable,tabel.Delete,tabel.DeleteIsGrantable,tabel.Update,tabel.UpdateIsGrantable);
-            }
-
-        //    String a = "select host, user, password from mysql.user;";
-
-        //    List<String> myCars = new List<String>{
-        //     "DD", "asd", "asdasd"
-        //};
-        //    SortableBindingList<String> myCarsBindingList;
-        //    BindingSource carBindingSource;
-
-        //    myCarsBindingList = new SortableBindingList<String>(myCars);
-        //    carBindingSource = new BindingSource();
-        //    carBindingSource.DataSource = myCarsBindingList;
-        //    //Drag a DataGridView control from the Toolbox to the form.
-        //    dataGridView3.DataSource = myCars;
-
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -64,7 +44,7 @@ namespace WindowsFormsApplication1
         {
             connection.Close();
         }
-
+        //kliknięcie wybranej tabeli, powoduje pojwenie się uprawnień użytkowników
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             dataGridView2.Rows.Clear();

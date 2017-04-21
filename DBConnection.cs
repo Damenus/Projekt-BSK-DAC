@@ -16,21 +16,21 @@ namespace WindowsFormsApplication1
     {
         public DBConnection()
         {
-            DatabaseName = "bsk";
-            Server = "127.0.0.1";
-            Login = "damian";
-            Password = "asd";
+
         }
 
         public DBConnection(string login, string password)
         {
-            DatabaseName = "bsk";
-            Server = "127.0.0.1";
+            DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
+            Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
+            Port = "32771"; //może w dockerze jest zmienny port
             Login = login;
             Password = password;
         }
-
+        
         public string Server { get; set;  }
+
+        public string Port { get; set; }
 
         public string DatabaseName { get; set; }
 
@@ -44,22 +44,13 @@ namespace WindowsFormsApplication1
             get { return connection; }
         }
 
-        //nie wiem czy zasotawić
-        private static DBConnection _instance = null;
-        public static DBConnection Instance()
-        {
-            if (_instance == null)
-                _instance = new DBConnection();
-            return _instance;
-        }
-
         //łączenie z bazą danych
         public bool IsConnect()
         {
             bool result = true;
             if (Connection == null)
-            {               
-                string connetionString = string.Format("Server={0}; database={1}; UID={2}; password={3}", Server, DatabaseName, Login, Password);
+            {
+                string connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
                 connection = new MySqlConnection(connetionString);
                 connection.Open();
                 result = true;
@@ -132,20 +123,22 @@ namespace WindowsFormsApplication1
             return list;
         }
 
+        // <------------------------------------ NOTATKI ----------------------------------------------->
         //SELECT * FROM mysql.db WHERE Db = 'bsk'
         //GRANT UPDATE ON bsk.user TO damian@localhost
 
         //SELECT * FROM `db`
         //show tabels
 
+        //uprawnienia
         //show grants for 'user'@'host'
         /*SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges;
-SELECT User,Host,Db FROM mysql.db;*/
+            SELECT User,Host,Db FROM mysql.db;*/
        
         //taki tam przykłąd
         public void Select(string filename)
         {
-                        //cmd.CommandText = "SELECT count(*) from tbUser WHERE UserName = @username and password=@password";
+            //cmd.CommandText = "SELECT count(*) from tbUser WHERE UserName = @username and password=@password";
             //command.Parameters.Add("@username", txtUserName.Text);
             //command.Parameters.Add("@password", txtPassword.Text);
             //var count = cmd.ExecuteScalar();
