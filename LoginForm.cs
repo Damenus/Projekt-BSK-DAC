@@ -14,6 +14,9 @@ namespace WindowsFormsApplication1
 {
     public partial class LoginForm : Form
     {
+
+        public DBConnection connection { get; set; }
+
         public LoginForm()
         {
             InitializeComponent();
@@ -28,8 +31,6 @@ namespace WindowsFormsApplication1
             //    return;
             //}
             //moja klasa do łączenia się z bazą danych
-            DBConnection connection;
-
             try
             {
                 //?skrót hasła
@@ -42,9 +43,6 @@ namespace WindowsFormsApplication1
 
                 //ukrycie ekranu logowania i pokazanie głównego menu
                 this.Hide();
-                //MessageBox.Show("Login Successful!");
-                Form1 form = new Form1(connection);
-                form.Show();                
 
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)

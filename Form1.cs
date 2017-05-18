@@ -12,14 +12,16 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
-        DBConnection connection;
+        DBConnection connection;   
 
-       
-
-        public Form1(DBConnection con)
+        public Form1()
         {
             InitializeComponent();
-            connection = con;
+
+            // wyświetlanie loginform i pobranie nowego połaćzenia
+            LoginForm form = new LoginForm();
+            form.ShowDialog();
+            connection = form.connection;
 
             //załadnowanie listy tabel bazy danych
             var list = connection.GetTablesName();

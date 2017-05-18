@@ -23,7 +23,7 @@ namespace WindowsFormsApplication1
         {
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
             Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
-            Port = "32771"; //może w dockerze jest zmienny port
+            Port = "3306"; //może w dockerze jest zmienny port
             Login = login;
             Password = password;
         }
@@ -61,6 +61,7 @@ namespace WindowsFormsApplication1
 
         public void Close()
         {
+            
             connection.Close();
         }
 
