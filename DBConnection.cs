@@ -16,7 +16,7 @@ namespace WindowsFormsApplication1
     {
         public DBConnection()
         {
-
+            ListTabels = new List<String> { };
         }
 
         public DBConnection(string login, string password)
@@ -37,6 +37,10 @@ namespace WindowsFormsApplication1
         public string Password { get; set; }
 
         public string Login { get; set; }
+
+        public List<String> ListTabels { get; set; }
+
+        public List<Grantee> ListGrantee { get; set; }
 
         private MySqlConnection connection = null;
         public MySqlConnection Connection
@@ -84,6 +88,29 @@ namespace WindowsFormsApplication1
                 myReader.Close();
             }
 
+            //ListTabels = list;
+            return list;
+        }
+
+        //pobranie listy użytoników z bazydanych
+        public List<String> GetUsers()
+        {
+            List<String> list = new List<string>();
+
+            if (this.IsConnect() == true)
+            {
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = string.Format("select user from mysql.user where Host = 'localhost';", this.DatabaseName);
+
+                MySqlDataReader myReader = cmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    list.Add(myReader.GetString(0));
+                }
+                myReader.Close();
+            }
+
             return list;
         }
 
@@ -103,6 +130,46 @@ namespace WindowsFormsApplication1
                 while (myReader.Read())
                 {
                     String userName = myReader.GetString(0);
+                    String privilegeType = myReader.GetString(1);
+                    String isGrantable = myReader.GetString(2);
+
+                    //czy istnieje już taki
+                    if (list.Exists(x => x.UserName == userName))
+                    {
+                        list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable);
+                    }
+                    else //utworz jak nie istnieje
+                    {
+                        list.Add(new Grantee(userName, privilegeType, isGrantable));
+                    }
+                }
+
+                myReader.Close();
+
+            }
+
+            return list;
+        }
+
+        public List<Grantee> GetTablePrivilegesAllUsers(String tableName)
+        {
+            List<Grantee> list = new List<Grantee>();
+            var listUser = GetUsers();
+            foreach (var user in listUser)
+            {
+                list.Add(new Grantee(user));
+            }
+
+            if (this.IsConnect() == true)
+            {
+                MySqlCommand cmd = connection.CreateCommand();
+
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
+
+                MySqlDataReader myReader = cmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
                     String privilegeType = myReader.GetString(1);
                     String isGrantable = myReader.GetString(2);
 
@@ -163,5 +230,62 @@ namespace WindowsFormsApplication1
                 //this.CloseConnection();
             }
         }
+
+        //rejestracja
+
+        //GRANT SELECT, INSERT ON bsk.ksiazka TO 'Marta'@'localhost';
+
+        //CREATE USER 'Franek'@'%' IDENTIFIED BY 'pass';
+        //GRANT ALL ON bsk.* TO 'Franek'@'%';
+        //GRANT ALL ON mysql.* TO 'Franek'@'%';
+
+        public bool comparisonTabels(List<string> list)
+        {
+            bool result = false;
+
+            if (ListTabels == null)
+                result = true;
+            else
+            if (list.Count() != ListTabels.Count())
+                result = true;
+  
+                return result;
+
+        }
+
+        public bool isGranteeListTheSame(List<Grantee> list)
+        {
+            bool result = false;
+
+            if (ListGrantee != null)
+                foreach(var elementNew in list) {    
+                    foreach(var elementOld in ListGrantee ) {
+                        if (elementNew.UserName == elementOld.UserName)
+                            if (!isGranteeElementsTheSame(elementNew, elementOld))
+                                result = true;
+                    }
+                }
+
+            return result;
+
+        }
+
+        public bool isGranteeElementsTheSame(Grantee a, Grantee b)
+        {
+            bool result = true;
+
+            if (a.Select != b.Select) result = false;
+            else if (a.Update != b.Update) result = false;
+            else if (a.Delete != b.Delete) result = false;
+            else if (a.Insert != b.Insert) result = false;
+            else if (a.SelectIsGrantable != b.SelectIsGrantable) result = false;
+            else if (a.UpdateIsGrantable != b.UpdateIsGrantable) result = false;
+            else if (a.DeleteIsGrantable != b.DeleteIsGrantable) result = false;
+            else if (a.InsertIsGrantable != b.InsertIsGrantable) result = false;
+
+            return result;
+        }
+          
+
     }
 }
