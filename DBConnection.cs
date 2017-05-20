@@ -22,8 +22,8 @@ namespace WindowsFormsApplication1
         public DBConnection(string login, string password)
         {
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
-            Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
-            Port = "3306"; //może w dockerze jest zmienny port
+            Server = "192.168.99.100"; //ip serwera; xampp ->"127.0.0.1"
+            Port = "32769";
             Login = login;
             Password = password;
         }

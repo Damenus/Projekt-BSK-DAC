@@ -184,16 +184,30 @@ namespace WindowsFormsApplication1
         {
             dataGridView1.AllowUserToAddRows = false;
             dataGridView2.AllowUserToAddRows = false;
-
+            dataGridView1.MultiSelect = false;
+            dataGridView2.MultiSelect = false;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             connection.Close();
         }
+        private void disableAllCheckboxes()
+        {
+            checkBox1.Enabled = false;
+            checkBox2.Enabled = false;
+            checkBox3.Enabled = false;
+            checkBox4.Enabled = false;
+            checkBox5.Enabled = false;
+            checkBox6.Enabled = false;
+            checkBox7.Enabled = false;
+            checkBox8.Enabled = false;
+
+        }
         private void disableChceckboxes()
         {
-            if (connection.myPrivileges.Insert.ToString() == "True")
+            DataGridViewRow row = dataGridView2.CurrentRow;
+            if (connection.myPrivileges.Insert.ToString() == "True" && row.Cells[3].Value.ToString() == "False")
             {
                 checkBox1.Enabled = true;
                 if (connection.myPrivileges.InsertIsGrantable.ToString() == "True")
@@ -206,7 +220,7 @@ namespace WindowsFormsApplication1
                 checkBox1.Enabled = false;
                 checkBox5.Enabled = false;
             }
-            if (connection.myPrivileges.Delete.ToString() == "True")
+            if (connection.myPrivileges.Delete.ToString() == "True" && row.Cells[5].Value.ToString() == "False")
             {
                 checkBox2.Enabled = true;
                 if (connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
@@ -219,7 +233,7 @@ namespace WindowsFormsApplication1
                 checkBox2.Enabled = false;
                 checkBox6.Enabled = false;
             }
-            if (connection.myPrivileges.Update.ToString() == "True")
+            if (connection.myPrivileges.Update.ToString() == "True" && row.Cells[7].Value.ToString() == "False")
             {
                 checkBox3.Enabled = true;
                 if (connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
@@ -232,7 +246,7 @@ namespace WindowsFormsApplication1
                 checkBox3.Enabled = false;
                 checkBox7.Enabled = false;
             }
-            if (connection.myPrivileges.Select.ToString() == "True")
+            if (connection.myPrivileges.Select.ToString() == "True" && row.Cells[1].Value.ToString() == "False")
             {
                 checkBox4.Enabled = true;
                 if (connection.myPrivileges.SelectIsGrantable.ToString() == "True")
@@ -250,6 +264,7 @@ namespace WindowsFormsApplication1
         //kliknięcie wybranej tabeli, powoduje pojwenie się uprawnień użytkowników
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            disableAllCheckboxes();
             dataGridView2.Rows.Clear();
             dataGridView2.Refresh();
 
@@ -263,11 +278,12 @@ namespace WindowsFormsApplication1
                     connection.myPrivileges = tabel;
                 dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
             }
-            disableChceckboxes();
-
+            dataGridView2.Rows[0].Selected = false;
         }
 
-
-
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            disableChceckboxes();
+        }
     }
 }
