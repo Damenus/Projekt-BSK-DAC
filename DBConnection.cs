@@ -38,6 +38,8 @@ namespace WindowsFormsApplication1
 
         public string Login { get; set; }
 
+        public Grantee myPrivileges;
+
         public List<String> ListTabels { get; set; }
 
         public List<Grantee> ListGrantee { get; set; }
@@ -98,7 +100,7 @@ namespace WindowsFormsApplication1
             List<String> list = new List<string>();
 
             if (this.IsConnect() == true)
-            {
+            try{
                 MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("select user from mysql.user where Host = 'localhost';", this.DatabaseName);
@@ -109,6 +111,10 @@ namespace WindowsFormsApplication1
                     list.Add(myReader.GetString(0));
                 }
                 myReader.Close();
+            }
+            catch(Exception e)
+            {
+
             }
 
             return list;
@@ -166,25 +172,32 @@ namespace WindowsFormsApplication1
 
                 cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
 
-                MySqlDataReader myReader = cmd.ExecuteReader();
-                while (myReader.Read())
+                try
                 {
-                    String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
-                    String privilegeType = myReader.GetString(1);
-                    String isGrantable = myReader.GetString(2);
+                    MySqlDataReader myReader = cmd.ExecuteReader();
+                    while (myReader.Read())
+                    {
+                        String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
+                        String privilegeType = myReader.GetString(1);
+                        String isGrantable = myReader.GetString(2);
 
-                    //czy istnieje już taki
-                    if (list.Exists(x => x.UserName == userName))
-                    {
-                        list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable);
+                        //czy istnieje już taki
+                        if (list.Exists(x => x.UserName == userName))
+                        {
+                            list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable);
+                        }
+                        else //utworz jak nie istnieje
+                        {
+                            list.Add(new Grantee(userName, privilegeType, isGrantable));
+                        }
                     }
-                    else //utworz jak nie istnieje
-                    {
-                        list.Add(new Grantee(userName, privilegeType, isGrantable));
-                    }
+
+                    myReader.Close();
                 }
+                catch(Exception e)
+                {
 
-                myReader.Close();
+                }
 
             }
 
