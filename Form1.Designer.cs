@@ -53,7 +53,6 @@
             this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -227,7 +226,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(144, 23);
             this.button1.TabIndex = 11;
-            this.button1.Text = "Zmień uprawnienia";
+            this.button1.Text = "Przekaż uprawnienia";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -277,18 +276,8 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(144, 23);
             this.button2.TabIndex = 18;
-            this.button2.Text = "Przekaż uprawnienia";
+            this.button2.Text = "Przejmij uprawnienia";
             this.button2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox9
-            // 
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.Location = new System.Drawing.Point(188, 336);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(61, 17);
-            this.checkBox9.TabIndex = 19;
-            this.checkBox9.Text = "Przejmij";
-            this.checkBox9.UseVisualStyleBackColor = true;
             // 
             // statusStrip1
             // 
@@ -313,7 +302,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1146, 469);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.checkBox8);
             this.Controls.Add(this.checkBox7);
@@ -360,7 +348,6 @@
         private System.Windows.Forms.CheckBox checkBox7;
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.DataGridViewTextBoxColumn Login;
         private System.Windows.Forms.DataGridViewTextBoxColumn Select;
         private System.Windows.Forms.DataGridViewTextBoxColumn SelectIsGrantable;

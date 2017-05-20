@@ -267,18 +267,20 @@ namespace WindowsFormsApplication1
             disableAllCheckboxes();
             dataGridView2.Rows.Clear();
             dataGridView2.Refresh();
-
-            chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
-            var nameTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
-            var list2 = connection.GetTablePrivilegesAllUsers(nameTable);
-            connection.ListGrantee = list2;
-            foreach (var tabel in list2)
+            if (e.RowIndex >= 0) 
             {
-                if (tabel.UserName == connection.Login)
-                    connection.myPrivileges = tabel;
-                dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+                chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
+                var nameTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
+                var list2 = connection.GetTablePrivilegesAllUsers(nameTable);
+                connection.ListGrantee = list2;
+                foreach (var tabel in list2)
+                {
+                    if (tabel.UserName == connection.Login)
+                        connection.myPrivileges = tabel;
+                    dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+                }
+                dataGridView2.Rows[0].Selected = false;
             }
-            dataGridView2.Rows[0].Selected = false;
         }
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
