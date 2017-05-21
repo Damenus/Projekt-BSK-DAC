@@ -44,7 +44,7 @@ namespace WindowsFormsApplication1
 
         public List<Grantee> ListGrantee { get; set; }
 
-        private MySqlConnection connection = null;
+        public MySqlConnection connection = null;
         public MySqlConnection Connection
         {
             get { return connection; }

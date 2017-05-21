@@ -214,6 +214,7 @@ namespace WindowsFormsApplication1
             checkBox8.Enabled = false;
             checkBox9.Enabled = false;
             checkBox10.Enabled = false;
+            button2.Enabled = false;
 
         }
         private void disableChceckboxes()
@@ -302,6 +303,42 @@ namespace WindowsFormsApplication1
         {
             if(dataGridView2.CurrentRow != null)
             disableChceckboxes();
+            if (connection.myPrivileges.TakeOverIsGrantable.ToString() == "True" && dataGridView2.CurrentCell != null)
+                button2.Enabled = true;
+            else
+                button2.Enabled = false;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
+            MySqlConnection myConnection = new MySqlConnection(connectionString);
+            myConnection.Open();
+            String userName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'%'";
+            String myUserName = "'" + connection.Login + "'@'%'";
+            MySqlCommand cmd1 = myConnection.CreateCommand();
+        //usuwanie własnych uprawnień
+            cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = {0} AND TABLE_NAME = '{1}';",
+                myUserName, dataGridView1.CurrentCell.Value.ToString());
+            cmd1.ExecuteReader();
+            myConnection.Close();
+            //myConnection.Open();
+            //pobieranie zabieranych uprawnien i nadanie ich sobie
+            DataGridViewRow row = dataGridView2.CurrentRow;
+            MySqlCommand cmd2 = myConnection.CreateCommand();
+            for (int i = 1; i < 10; i+=2)
+            {
+                myConnection.Open();
+                cmd1.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES({0}, '{1}', '{2}', '{3}');", myUserName, dataGridView1.CurrentCell.Value.ToString(), row.Cells[i].Value.ToString(), row.Cells[i+1].Value.ToString( )== "False" ? "NO" : "YES");
+                cmd1.ExecuteReader();
+                myConnection.Close();
+            }
+            //usuwanie uprawnień użytkownikowi, od którego przejmujemy
+            MySqlCommand cmd3 = connection.connection.CreateCommand();
+            myConnection.Open();
+            cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = {0} AND TABLE_NAME = '{1}'; ", userName, dataGridView1.CurrentCell.Value.ToString());
+            cmd1.ExecuteReader();
+            myConnection.Close();
         }
     }
 }
