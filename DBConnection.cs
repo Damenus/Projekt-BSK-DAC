@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient.Authentication;
+using MySql.Data.Common;
+using MySql.Data.Types;
 using System.Windows.Forms;
 using System.Data;
 
@@ -22,8 +25,18 @@ namespace WindowsFormsApplication1
         public DBConnection(string login, string password)
         {
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
+<<<<<<< HEAD
             Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
             Port = "32768";
+=======
+<<<<<<< HEAD
+            Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
+            Port = "32768"; //może w dockerze jest zmienny port
+=======
+            Server = "192.168.99.100"; //ip serwera; xampp ->"127.0.0.1"
+            Port = "32769";
+>>>>>>> origin/master
+>>>>>>> eb3050d767f7ca0bc258410b1cddb3a2a97263a4
             Login = login;
             Password = password;
         }
@@ -55,8 +68,13 @@ namespace WindowsFormsApplication1
         {
             bool result = true;
             if (Connection == null)
+<<<<<<< HEAD
             {
                 //string connetionString = string.Format("Server={0}; Port={1}; database={2}; user={3}; password={4}; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
+=======
+            {               
+                //string connetionString = string.Format("Server={0}; Port={1}; database={2}; user=sslclient; password=pass; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
+>>>>>>> eb3050d767f7ca0bc258410b1cddb3a2a97263a4
                 string connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
                 connection = new MySqlConnection(connetionString);
                 connection.Open();
