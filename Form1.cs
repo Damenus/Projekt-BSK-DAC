@@ -207,52 +207,44 @@ namespace WindowsFormsApplication1
         private void disableChceckboxes()
         {
             DataGridViewRow row = dataGridView2.CurrentRow;
-            if (connection.myPrivileges.Insert.ToString() == "True" && row.Cells[3].Value.ToString() == "False")
+            if (connection.myPrivileges.Insert.ToString() == "True" &&
+                row.Cells[3].Value.ToString() == "False" && connection.myPrivileges.InsertIsGrantable.ToString() == "True")
             {
-                checkBox1.Enabled = true;
-                if (connection.myPrivileges.InsertIsGrantable.ToString() == "True")
+                    checkBox1.Enabled = true;
                     checkBox5.Enabled = true;
-                else
-                    checkBox5.Enabled = false;
             }
             else
             {
                 checkBox1.Enabled = false;
                 checkBox5.Enabled = false;
             }
-            if (connection.myPrivileges.Delete.ToString() == "True" && row.Cells[5].Value.ToString() == "False")
+            if (connection.myPrivileges.Delete.ToString() == "True" &&
+                row.Cells[5].Value.ToString() == "False" && connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
             {
                 checkBox2.Enabled = true;
-                if (connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
-                    checkBox6.Enabled = true;
-                else
-                    checkBox6.Enabled = false;
+                checkBox6.Enabled = true;
             }
             else
             {
                 checkBox2.Enabled = false;
                 checkBox6.Enabled = false;
             }
-            if (connection.myPrivileges.Update.ToString() == "True" && row.Cells[7].Value.ToString() == "False")
+            if (connection.myPrivileges.Update.ToString() == "True" &&
+                row.Cells[7].Value.ToString() == "False" && connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
             {
                 checkBox3.Enabled = true;
-                if (connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
-                    checkBox7.Enabled = true;
-                else
-                    checkBox7.Enabled = false;
+                checkBox7.Enabled = true;
             }
             else
             {
                 checkBox3.Enabled = false;
                 checkBox7.Enabled = false;
             }
-            if (connection.myPrivileges.Select.ToString() == "True" && row.Cells[1].Value.ToString() == "False")
+            if (connection.myPrivileges.Select.ToString() == "True" &&
+                row.Cells[1].Value.ToString() == "False" && connection.myPrivileges.SelectIsGrantable.ToString() == "True")
             {
                 checkBox4.Enabled = true;
-                if (connection.myPrivileges.SelectIsGrantable.ToString() == "True")
-                    checkBox8.Enabled = true;
-                else
-                    checkBox8.Enabled = false;
+                checkBox8.Enabled = true;
             }
             else
             {
