@@ -137,9 +137,9 @@ namespace WindowsFormsApplication1
             myConnection.Open();
             MySqlCommand cmd = myConnection.CreateCommand();
             if (!grantable)
-                cmd.CommandText = string.Format("GRANT {0} ON {1}.{2} TO {3};", privilage, connection.DatabaseName, tableName, granteeName);
+                cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'NO');",granteeName, tableName, privilage);
             else
-                cmd.CommandText = string.Format("GRANT {0} ON {1}.{2} TO {3} WITH GRANT OPTION;", privilage, connection.DatabaseName, tableName, granteeName);
+                cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'YES');", granteeName, tableName, privilage);
             cmd.ExecuteReader();
             myConnection.Close();
         }
@@ -277,6 +277,7 @@ namespace WindowsFormsApplication1
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            if(dataGridView2.CurrentRow != null)
             disableChceckboxes();
         }
     }

@@ -130,7 +130,7 @@ namespace WindowsFormsApplication1
             {
                 MySqlCommand cmd = connection.CreateCommand();
 
-                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
 
                 MySqlDataReader myReader = cmd.ExecuteReader();
                 while (myReader.Read())
@@ -170,7 +170,7 @@ namespace WindowsFormsApplication1
             {
                 MySqlCommand cmd = connection.CreateCommand();
 
-                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
 
                 try
                 {
