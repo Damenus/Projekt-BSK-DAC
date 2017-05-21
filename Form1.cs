@@ -137,9 +137,9 @@ namespace WindowsFormsApplication1
             myConnection.Open();
             MySqlCommand cmd = myConnection.CreateCommand();
             if (!grantable)
-                cmd.CommandText = string.Format("GRANT {0} ON {1}.{2} TO {3};", privilage, connection.DatabaseName, tableName, granteeName);
+                cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'NO');",granteeName, tableName, privilage);
             else
-                cmd.CommandText = string.Format("GRANT {0} ON {1}.{2} TO {3} WITH GRANT OPTION;", privilage, connection.DatabaseName, tableName, granteeName);
+                cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'YES');", granteeName, tableName, privilage);
             cmd.ExecuteReader();
             myConnection.Close();
         }
@@ -184,61 +184,67 @@ namespace WindowsFormsApplication1
         {
             dataGridView1.AllowUserToAddRows = false;
             dataGridView2.AllowUserToAddRows = false;
-
+            dataGridView1.MultiSelect = false;
+            dataGridView2.MultiSelect = false;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             connection.Close();
         }
+        private void disableAllCheckboxes()
+        {
+            checkBox1.Enabled = false;
+            checkBox2.Enabled = false;
+            checkBox3.Enabled = false;
+            checkBox4.Enabled = false;
+            checkBox5.Enabled = false;
+            checkBox6.Enabled = false;
+            checkBox7.Enabled = false;
+            checkBox8.Enabled = false;
+
+        }
         private void disableChceckboxes()
         {
-            if (connection.myPrivileges.Insert.ToString() == "True")
+            DataGridViewRow row = dataGridView2.CurrentRow;
+            if (connection.myPrivileges.Insert.ToString() == "True" &&
+                row.Cells[3].Value.ToString() == "False" && connection.myPrivileges.InsertIsGrantable.ToString() == "True")
             {
-                checkBox1.Enabled = true;
-                if (connection.myPrivileges.InsertIsGrantable.ToString() == "True")
+                    checkBox1.Enabled = true;
                     checkBox5.Enabled = true;
-                else
-                    checkBox5.Enabled = false;
             }
             else
             {
                 checkBox1.Enabled = false;
                 checkBox5.Enabled = false;
             }
-            if (connection.myPrivileges.Delete.ToString() == "True")
+            if (connection.myPrivileges.Delete.ToString() == "True" &&
+                row.Cells[5].Value.ToString() == "False" && connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
             {
                 checkBox2.Enabled = true;
-                if (connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
-                    checkBox6.Enabled = true;
-                else
-                    checkBox6.Enabled = false;
+                checkBox6.Enabled = true;
             }
             else
             {
                 checkBox2.Enabled = false;
                 checkBox6.Enabled = false;
             }
-            if (connection.myPrivileges.Update.ToString() == "True")
+            if (connection.myPrivileges.Update.ToString() == "True" &&
+                row.Cells[7].Value.ToString() == "False" && connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
             {
                 checkBox3.Enabled = true;
-                if (connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
-                    checkBox7.Enabled = true;
-                else
-                    checkBox7.Enabled = false;
+                checkBox7.Enabled = true;
             }
             else
             {
                 checkBox3.Enabled = false;
                 checkBox7.Enabled = false;
             }
-            if (connection.myPrivileges.Select.ToString() == "True")
+            if (connection.myPrivileges.Select.ToString() == "True" &&
+                row.Cells[1].Value.ToString() == "False" && connection.myPrivileges.SelectIsGrantable.ToString() == "True")
             {
                 checkBox4.Enabled = true;
-                if (connection.myPrivileges.SelectIsGrantable.ToString() == "True")
-                    checkBox8.Enabled = true;
-                else
-                    checkBox8.Enabled = false;
+                checkBox8.Enabled = true;
             }
             else
             {
@@ -250,24 +256,29 @@ namespace WindowsFormsApplication1
         //kliknięcie wybranej tabeli, powoduje pojwenie się uprawnień użytkowników
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            disableAllCheckboxes();
             dataGridView2.Rows.Clear();
             dataGridView2.Refresh();
-
-            chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
-            var nameTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
-            var list2 = connection.GetTablePrivilegesAllUsers(nameTable);
-            connection.ListGrantee = list2;
-            foreach (var tabel in list2)
+            if (e.RowIndex >= 0) 
             {
-                if (tabel.UserName == connection.Login)
-                    connection.myPrivileges = tabel;
-                dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+                chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
+                var nameTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
+                var list2 = connection.GetTablePrivilegesAllUsers(nameTable);
+                connection.ListGrantee = list2;
+                foreach (var tabel in list2)
+                {
+                    if (tabel.UserName == connection.Login)
+                        connection.myPrivileges = tabel;
+                    dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+                }
+                dataGridView2.Rows[0].Selected = false;
             }
-            disableChceckboxes();
-
         }
 
-
-
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(dataGridView2.CurrentRow != null)
+            disableChceckboxes();
+        }
     }
 }

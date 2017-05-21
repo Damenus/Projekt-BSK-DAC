@@ -25,8 +25,13 @@ namespace WindowsFormsApplication1
         public DBConnection(string login, string password)
         {
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
+<<<<<<< HEAD
             Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
             Port = "32768"; //może w dockerze jest zmienny port
+=======
+            Server = "192.168.99.100"; //ip serwera; xampp ->"127.0.0.1"
+            Port = "32769";
+>>>>>>> origin/master
             Login = login;
             Password = password;
         }
@@ -134,7 +139,7 @@ namespace WindowsFormsApplication1
             {
                 MySqlCommand cmd = connection.CreateCommand();
 
-                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
 
                 MySqlDataReader myReader = cmd.ExecuteReader();
                 while (myReader.Read())
@@ -174,7 +179,7 @@ namespace WindowsFormsApplication1
             {
                 MySqlCommand cmd = connection.CreateCommand();
 
-                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM information_schema.TABLE_PRIVILEGES WHERE TABLE_SCHEMA = '{0}' AND TABLE_NAME = '{1}';", this.DatabaseName, tableName);
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
 
                 try
                 {
