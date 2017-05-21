@@ -22,8 +22,8 @@ namespace WindowsFormsApplication1
         public DBConnection(string login, string password)
         {
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
-            Server = "192.168.99.100"; //ip serwera; xampp ->"127.0.0.1"
-            Port = "32769";
+            Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
+            Port = "32768";
             Login = login;
             Password = password;
         }
@@ -56,6 +56,7 @@ namespace WindowsFormsApplication1
             bool result = true;
             if (Connection == null)
             {
+                //string connetionString = string.Format("Server={0}; Port={1}; database={2}; user={3}; password={4}; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
                 string connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
                 connection = new MySqlConnection(connetionString);
                 connection.Open();
@@ -103,7 +104,7 @@ namespace WindowsFormsApplication1
             try{
                 MySqlCommand cmd = connection.CreateCommand();
 
-                cmd.CommandText = string.Format("select user from mysql.user where Host = 'localhost';", this.DatabaseName);
+                cmd.CommandText = string.Format("select user from mysql.user where Host = '%';", this.DatabaseName); //localhost
 
                 MySqlDataReader myReader = cmd.ExecuteReader();
                 while (myReader.Read())
@@ -168,19 +169,23 @@ namespace WindowsFormsApplication1
 
             if (this.IsConnect() == true)
             {
-                MySqlCommand cmd = connection.CreateCommand();
-      
-                cmd.CommandText = string.Format("SELECT GRANTEE, TABLE_NAME = '{0}', PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;", tableName);
 
-                try
-                {
+                string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+                MySqlConnection myConnection = new MySqlConnection(connectionString);
+                myConnection.Open();
+                MySqlCommand cmd = myConnection.CreateCommand();
+
+                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges WHERE TABLE_NAME = '{0}';", tableName);
+
+              //  try
+            //    {
                     MySqlDataReader myReader = cmd.ExecuteReader();
                     while (myReader.Read())
                     {
                         String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
-                        String privilegeType = myReader.GetString(2);
-                        String isGrantable = myReader.GetString(3);
-                        String table = myReader.GetString(1);
+                        String privilegeType = myReader.GetString(1);
+                        String isGrantable = myReader.GetString(2);
+                        String table = tableName;//myReader.GetString(1);
 
                         //czy istnieje już taki
                         if (list.Exists(x => x.UserName == userName))
@@ -194,11 +199,12 @@ namespace WindowsFormsApplication1
                     }
 
                     myReader.Close();
-                }
-                catch(Exception e)
-                {
+                //}
+                //catch(Exception e)
+                //{
 
-                }
+                //}
+                    myConnection.Close();
 
             }
 

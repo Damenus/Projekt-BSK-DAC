@@ -124,13 +124,13 @@ namespace WindowsFormsApplication1
             connection.ListGrantee = list;
             foreach (var tabel in list)
             {
-                dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+                dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable, tabel.TakeOver, tabel.TakeOverIsGrantable);
             }
         }
         //nadawanie uprawnień
         private void grant(string privilage, bool grantable)
         {
-            var granteeName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'localhost'";
+            var granteeName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'%'";
             var tableName = dataGridView1.CurrentCell.Value.ToString();
             string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
             MySqlConnection myConnection = new MySqlConnection(connectionString);
@@ -318,7 +318,7 @@ namespace WindowsFormsApplication1
             String myUserName = "'" + connection.Login + "'@'%'";
             MySqlCommand cmd1 = myConnection.CreateCommand();
         //usuwanie własnych uprawnień
-            cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = {0} AND TABLE_NAME = '{1}';",
+            cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND TABLE_NAME = '{1}';",
                 myUserName, dataGridView1.CurrentCell.Value.ToString());
             cmd1.ExecuteReader();
             myConnection.Close();
@@ -328,15 +328,20 @@ namespace WindowsFormsApplication1
             MySqlCommand cmd2 = myConnection.CreateCommand();
             for (int i = 1; i < 10; i+=2)
             {
-                myConnection.Open();
-                cmd1.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES({0}, '{1}', '{2}', '{3}');", myUserName, dataGridView1.CurrentCell.Value.ToString(), row.Cells[i].Value.ToString(), row.Cells[i+1].Value.ToString( )== "False" ? "NO" : "YES");
-                cmd1.ExecuteReader();
-                myConnection.Close();
+               
+                if (row.Cells[i].Value.ToString() == "True")
+                {
+                    myConnection.Open();
+                    cmd1.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', '{3}');", myUserName, dataGridView1.CurrentCell.Value.ToString(), dataGridView2.Columns[i].HeaderText.ToString(), row.Cells[i + 1].Value.ToString() == "False" ? "NO" : "YES"); //dataGridView2.Rows[-1].Cells[i].Value.ToString()
+                    cmd1.ExecuteReader();
+                    myConnection.Close();
+                }
+
             }
             //usuwanie uprawnień użytkownikowi, od którego przejmujemy
             MySqlCommand cmd3 = connection.connection.CreateCommand();
             myConnection.Open();
-            cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = {0} AND TABLE_NAME = '{1}'; ", userName, dataGridView1.CurrentCell.Value.ToString());
+            cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND TABLE_NAME = '{1}'; ", userName, dataGridView1.CurrentCell.Value.ToString());
             cmd1.ExecuteReader();
             myConnection.Close();
         }
