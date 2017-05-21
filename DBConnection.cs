@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MySql.Data;
 using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient.Authentication;
+using MySql.Data.Common;
+using MySql.Data.Types;
 using System.Windows.Forms;
 using System.Data;
 
@@ -23,7 +26,7 @@ namespace WindowsFormsApplication1
         {
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
             Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
-            Port = "3306"; //może w dockerze jest zmienny port
+            Port = "32768"; //może w dockerze jest zmienny port
             Login = login;
             Password = password;
         }
@@ -55,7 +58,8 @@ namespace WindowsFormsApplication1
         {
             bool result = true;
             if (Connection == null)
-            {
+            {               
+                //string connetionString = string.Format("Server={0}; Port={1}; database={2}; user=sslclient; password=pass; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
                 string connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
                 connection = new MySqlConnection(connetionString);
                 connection.Open();
