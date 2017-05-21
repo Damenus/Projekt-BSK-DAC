@@ -169,8 +169,8 @@ namespace WindowsFormsApplication1
             if (this.IsConnect() == true)
             {
                 MySqlCommand cmd = connection.CreateCommand();
-
-                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
+      
+                cmd.CommandText = string.Format("SELECT GRANTEE, TABLE_NAME = '{0}', PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;", tableName);
 
                 try
                 {
@@ -178,8 +178,9 @@ namespace WindowsFormsApplication1
                     while (myReader.Read())
                     {
                         String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
-                        String privilegeType = myReader.GetString(1);
-                        String isGrantable = myReader.GetString(2);
+                        String privilegeType = myReader.GetString(2);
+                        String isGrantable = myReader.GetString(3);
+                        String table = myReader.GetString(1);
 
                         //czy istnieje już taki
                         if (list.Exists(x => x.UserName == userName))
@@ -189,7 +190,7 @@ namespace WindowsFormsApplication1
                         else //utworz jak nie istnieje
                         {
                             list.Add(new Grantee(userName, privilegeType, isGrantable));
-                        }
+                        }  
                     }
 
                     myReader.Close();
@@ -238,7 +239,7 @@ namespace WindowsFormsApplication1
                     //Use GetString etc depending on the column datatypes.
                     Console.WriteLine(myReader.GetInt32(0));
                 }
-
+                myReader.Close();
                 //close connection
                 //this.CloseConnection();
             }

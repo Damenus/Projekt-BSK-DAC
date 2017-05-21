@@ -16,11 +16,13 @@ namespace WindowsFormsApplication1
             this.Update = false;
             this.Delete = false;
             this.Insert = false;
+            this.TakeOver = false;
 
             this.SelectIsGrantable = false;
             this.UpdateIsGrantable = false;
             this.DeleteIsGrantable = false;
             this.InsertIsGrantable = false;
+            this.TakeOverIsGrantable = false;
 
         }
 
@@ -32,11 +34,14 @@ namespace WindowsFormsApplication1
             this.Update = false;
             this.Delete = false;
             this.Insert = false;
+            this.TakeOver = false;
 
             this.SelectIsGrantable = false;
             this.UpdateIsGrantable = false;
             this.DeleteIsGrantable = false;
             this.InsertIsGrantable = false;
+            this.TakeOverIsGrantable = false;
+            
 
             SetPrivileges(privilege, grantable);
 
@@ -49,12 +54,13 @@ namespace WindowsFormsApplication1
         public bool Update { get; set; }
         public bool Delete { get; set; }
         public bool Insert { get; set; }
+        public bool TakeOver { get; set; }
 
         public bool SelectIsGrantable { get; set; }
         public bool UpdateIsGrantable { get; set; }
         public bool DeleteIsGrantable { get; set; }
         public bool InsertIsGrantable { get; set; }
-
+        public bool TakeOverIsGrantable { get; set; }
         public void SetPrivileges(String privileges, String grantable)
         {
             //zamian YES/NO na true/false
@@ -82,6 +88,11 @@ namespace WindowsFormsApplication1
             {
                 this.Insert = true;
                 this.InsertIsGrantable = value;
+            }
+            else if(privileges =="TAKEOVER")
+            {
+                this.TakeOver = true;
+                this.TakeOverIsGrantable = value;
             }
         }
 

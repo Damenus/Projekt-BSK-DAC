@@ -178,6 +178,16 @@ namespace WindowsFormsApplication1
                     giveGrantable = false;
                 grant("SELECT", giveGrantable);
             }
+            if(checkBox9.Checked && connection.myPrivileges.TakeOver.ToString() == "True")
+            {
+                if (checkBox9.Checked && connection.myPrivileges.TakeOverIsGrantable.ToString() == "True")
+                {
+                    giveGrantable = true;
+                }
+                else
+                    giveGrantable = false;
+                grant("TAKEOVER", giveGrantable);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -202,6 +212,8 @@ namespace WindowsFormsApplication1
             checkBox6.Enabled = false;
             checkBox7.Enabled = false;
             checkBox8.Enabled = false;
+            checkBox9.Enabled = false;
+            checkBox10.Enabled = false;
 
         }
         private void disableChceckboxes()
@@ -251,7 +263,17 @@ namespace WindowsFormsApplication1
                 checkBox4.Enabled = false;
                 checkBox8.Enabled = false;
             }
-
+            if(connection.myPrivileges.TakeOver.ToString() == "True" &&
+                row.Cells[1].Value.ToString() == "False" && connection.myPrivileges.TakeOverIsGrantable.ToString() == "True")
+            {
+                checkBox9.Enabled = true;
+                checkBox10.Enabled = true;
+            }
+            else
+            {
+                checkBox9.Enabled = false;
+                checkBox10.Enabled = false;
+            }
         }
         //kliknięcie wybranej tabeli, powoduje pojwenie się uprawnień użytkowników
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -269,8 +291,9 @@ namespace WindowsFormsApplication1
                 {
                     if (tabel.UserName == connection.Login)
                         connection.myPrivileges = tabel;
-                    dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable);
+                    dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable, tabel.TakeOver, tabel.TakeOverIsGrantable);
                 }
+                if(dataGridView2.RowCount > 0)
                 dataGridView2.Rows[0].Selected = false;
             }
         }

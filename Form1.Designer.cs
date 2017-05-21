@@ -33,15 +33,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Select = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SelectIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Insert = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.InsertIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Delete = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DeleteIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Update = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.UpdateIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label5 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -55,6 +46,19 @@
             this.button2 = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
+            this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Select = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SelectIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Insert = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.InsertIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Delete = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeleteIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Update = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.UpdateIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TakeOver = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.TakeOverIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.checkBox10 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -67,7 +71,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.TableID});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 55);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 55);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(143, 174);
@@ -109,67 +113,15 @@
             this.Delete,
             this.DeleteIsGrantable,
             this.Update,
-            this.UpdateIsGrantable});
-            this.dataGridView2.Location = new System.Drawing.Point(189, 55);
+            this.UpdateIsGrantable,
+            this.TakeOver,
+            this.TakeOverIsGrantable});
+            this.dataGridView2.Location = new System.Drawing.Point(149, 55);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.Size = new System.Drawing.Size(945, 163);
+            this.dataGridView2.Size = new System.Drawing.Size(997, 163);
             this.dataGridView2.TabIndex = 3;
             this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellClick);
-            // 
-            // Login
-            // 
-            this.Login.HeaderText = "Login";
-            this.Login.Name = "Login";
-            this.Login.ReadOnly = true;
-            // 
-            // Select
-            // 
-            this.Select.HeaderText = "Select";
-            this.Select.Name = "Select";
-            this.Select.ReadOnly = true;
-            // 
-            // SelectIsGrantable
-            // 
-            this.SelectIsGrantable.HeaderText = "SelectIsGrantable";
-            this.SelectIsGrantable.Name = "SelectIsGrantable";
-            this.SelectIsGrantable.ReadOnly = true;
-            // 
-            // Insert
-            // 
-            this.Insert.HeaderText = "Insert";
-            this.Insert.Name = "Insert";
-            this.Insert.ReadOnly = true;
-            // 
-            // InsertIsGrantable
-            // 
-            this.InsertIsGrantable.HeaderText = "InsertIsGrantable";
-            this.InsertIsGrantable.Name = "InsertIsGrantable";
-            this.InsertIsGrantable.ReadOnly = true;
-            // 
-            // Delete
-            // 
-            this.Delete.HeaderText = "Delete";
-            this.Delete.Name = "Delete";
-            this.Delete.ReadOnly = true;
-            // 
-            // DeleteIsGrantable
-            // 
-            this.DeleteIsGrantable.HeaderText = "DeleteIsGrantable";
-            this.DeleteIsGrantable.Name = "DeleteIsGrantable";
-            this.DeleteIsGrantable.ReadOnly = true;
-            // 
-            // Update
-            // 
-            this.Update.HeaderText = "Update";
-            this.Update.Name = "Update";
-            this.Update.ReadOnly = true;
-            // 
-            // UpdateIsGrantable
-            // 
-            this.UpdateIsGrantable.HeaderText = "UpdateIsGrantable";
-            this.UpdateIsGrantable.Name = "UpdateIsGrantable";
-            this.UpdateIsGrantable.ReadOnly = true;
             // 
             // label5
             // 
@@ -296,11 +248,106 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
+            // checkBox9
+            // 
+            this.checkBox9.AutoSize = true;
+            this.checkBox9.Location = new System.Drawing.Point(188, 336);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.Size = new System.Drawing.Size(61, 17);
+            this.checkBox9.TabIndex = 21;
+            this.checkBox9.Text = "Przejmij";
+            this.checkBox9.UseVisualStyleBackColor = true;
+            // 
+            // Login
+            // 
+            this.Login.HeaderText = "Login";
+            this.Login.Name = "Login";
+            this.Login.ReadOnly = true;
+            this.Login.Width = 90;
+            // 
+            // Select
+            // 
+            this.Select.HeaderText = "Select";
+            this.Select.Name = "Select";
+            this.Select.ReadOnly = true;
+            this.Select.Width = 70;
+            // 
+            // SelectIsGrantable
+            // 
+            this.SelectIsGrantable.HeaderText = "SelectIsGrantable";
+            this.SelectIsGrantable.Name = "SelectIsGrantable";
+            this.SelectIsGrantable.ReadOnly = true;
+            // 
+            // Insert
+            // 
+            this.Insert.HeaderText = "Insert";
+            this.Insert.Name = "Insert";
+            this.Insert.ReadOnly = true;
+            this.Insert.Width = 70;
+            // 
+            // InsertIsGrantable
+            // 
+            this.InsertIsGrantable.HeaderText = "InsertIsGrantable";
+            this.InsertIsGrantable.Name = "InsertIsGrantable";
+            this.InsertIsGrantable.ReadOnly = true;
+            // 
+            // Delete
+            // 
+            this.Delete.HeaderText = "Delete";
+            this.Delete.Name = "Delete";
+            this.Delete.ReadOnly = true;
+            this.Delete.Width = 70;
+            // 
+            // DeleteIsGrantable
+            // 
+            this.DeleteIsGrantable.HeaderText = "DeleteIsGrantable";
+            this.DeleteIsGrantable.Name = "DeleteIsGrantable";
+            this.DeleteIsGrantable.ReadOnly = true;
+            // 
+            // Update
+            // 
+            this.Update.HeaderText = "Update";
+            this.Update.Name = "Update";
+            this.Update.ReadOnly = true;
+            this.Update.Width = 70;
+            // 
+            // UpdateIsGrantable
+            // 
+            this.UpdateIsGrantable.HeaderText = "UpdateIsGrantable";
+            this.UpdateIsGrantable.Name = "UpdateIsGrantable";
+            this.UpdateIsGrantable.ReadOnly = true;
+            // 
+            // TakeOver
+            // 
+            this.TakeOver.HeaderText = "TakeOver";
+            this.TakeOver.Name = "TakeOver";
+            this.TakeOver.ReadOnly = true;
+            this.TakeOver.Width = 70;
+            // 
+            // TakeOverIsGrantable
+            // 
+            this.TakeOverIsGrantable.HeaderText = "TakeOverIsGrantable";
+            this.TakeOverIsGrantable.Name = "TakeOverIsGrantable";
+            this.TakeOverIsGrantable.ReadOnly = true;
+            this.TakeOverIsGrantable.Width = 110;
+            // 
+            // checkBox10
+            // 
+            this.checkBox10.AutoSize = true;
+            this.checkBox10.Location = new System.Drawing.Point(261, 336);
+            this.checkBox10.Name = "checkBox10";
+            this.checkBox10.Size = new System.Drawing.Size(134, 17);
+            this.checkBox10.TabIndex = 22;
+            this.checkBox10.Text = "możliwość przekazania";
+            this.checkBox10.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1146, 469);
+            this.Controls.Add(this.checkBox10);
+            this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.checkBox8);
@@ -348,6 +395,9 @@
         private System.Windows.Forms.CheckBox checkBox7;
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.CheckBox checkBox9;
         private System.Windows.Forms.DataGridViewTextBoxColumn Login;
         private System.Windows.Forms.DataGridViewTextBoxColumn Select;
         private System.Windows.Forms.DataGridViewTextBoxColumn SelectIsGrantable;
@@ -357,8 +407,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DeleteIsGrantable;
         private System.Windows.Forms.DataGridViewTextBoxColumn Update;
         private System.Windows.Forms.DataGridViewTextBoxColumn UpdateIsGrantable;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TakeOver;
+        private System.Windows.Forms.DataGridViewTextBoxColumn TakeOverIsGrantable;
+        private System.Windows.Forms.CheckBox checkBox10;
     }
 }
 
