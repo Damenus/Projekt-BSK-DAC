@@ -43,7 +43,8 @@ namespace WindowsFormsApplication1
 
                 task = new ArrayList();
 
-                foreach (var i in connection.ListTabels)
+                //foreach (var i in connection.ListTabels)
+                string i = "Autor";
                     task.Add( Task.Factory.StartNew(() => chceckIfPrivilageChange(i, ct)));
                     //Task task = Task.Run(() => chceckIfPrivilageChange("ksiazka"));
             }
@@ -71,9 +72,9 @@ namespace WindowsFormsApplication1
 
             while (true)
             {
-                if (chosenTable == nameTable)
-                {
-                    var list = connection.GetTablePrivilegesAllUsers(nameTable);
+               // if (chosenTable == nameTable)
+               // {
+                var list = connection.GetTablePrivilegesAllUsers(chosenTable);
                     if (dataGridView2.InvokeRequired)
                     {
                         if (connection.isGranteeListTheSame(list))
@@ -89,7 +90,7 @@ namespace WindowsFormsApplication1
                         Console.WriteLine("task canceled");
                         break;
                     }
-                }
+                //}
             }
         }
 
@@ -200,7 +201,8 @@ namespace WindowsFormsApplication1
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            connection.Close();
+            if(connection.IsConnect())
+                connection.Close();
         }
         private void disableAllCheckboxes()
         {
