@@ -1,0 +1,86 @@
+﻿
+        CancellationTokenSource ts;
+        CancellationToken ct;
+
+		ArrayList task;
+
+		task.Add( Task.Factory.StartNew(() => chceckIfPrivilageChange(i, ct)));
+
+		 private void chceckIfPrivilageChange()
+        {
+
+            while (true)
+            {
+               
+                    var list = connection.GetTablePrivilegesAllUsers(chosenTable);
+                    if (dataGridView2.InvokeRequired)
+                    {
+                        if (connection.isGranteeListTheSame(list))
+                        {
+                            connection.ListGrantee = list;
+                            dataGridView2.BeginInvoke((new Delegate(refreshPreviligeTabele)), list);
+                        }
+                    }
+                    Thread.Sleep(2000);
+                    if (ct.IsCancellationRequested)
+                    {
+                        // another thread decided to cancel
+                        Console.WriteLine("task canceled");
+                        break;
+                    }
+              
+            }
+        }
+
+
+
+		//czy liczba użytkonikówsię zmieniła
+		private void chceckIfTablesChange()
+        {
+            while (true)
+            {
+                var list = connection.GetTablesName();
+                if (dataGridView1.InvokeRequired)
+                {
+                    if (connection.comparisonTabels(list))
+                    {
+                        connection.ListTabels = list;
+                        dataGridView1.BeginInvoke((new MyDelegate(DelegateMethod)), list);
+                    }
+                }
+                Thread.Sleep(1000);
+            }
+        }
+
+        
+        //SELECT * FROM `db`
+        //show tabels
+
+        //taki tam przykłąd
+        public void Select(string filename)
+        {
+            //cmd.CommandText = "SELECT count(*) from tbUser WHERE UserName = @username and password=@password";
+            //command.Parameters.Add("@username", txtUserName.Text);
+            //command.Parameters.Add("@password", txtPassword.Text);
+            //var count = cmd.ExecuteScalar();
+            string query = "SELECT * FROM banners WHERE file = '" + filename + "'";
+
+            //open connection
+            if (this.IsConnect() == true) // OpenConnection == isConection
+            {
+                //create command and assign the query and connection from the constructor
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                //Get the DataReader from the comment using ExecuteReader
+                MySqlDataReader myReader = cmd.ExecuteReader();
+                while (myReader.Read())
+                {
+                    //Use GetString etc depending on the column datatypes.
+                    Console.WriteLine(myReader.GetInt32(0));
+                }
+                myReader.Close();
+                //close connection
+                //this.CloseConnection();
+            }
+        }
+

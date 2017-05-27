@@ -10,6 +10,7 @@ using MySql.Data.Common;
 using MySql.Data.Types;
 using System.Windows.Forms;
 using System.Data;
+using System.IO;
 
 // string cs = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|\MyDatabase.mdf;Integrated Security=True;";
 
@@ -24,9 +25,11 @@ namespace WindowsFormsApplication1
 
         public DBConnection(string login, string password)
         {
+            readConfiguration();
+
             DatabaseName = "bsk"; //tabela musi istnieć w bazie danych
-            Server = "192.168.1.171"; //ip serwera; xampp ->"127.0.0.1"
-            Port = "3306";
+            //Server = "localhost"; //ip serwera; xampp ->"127.0.0.1"
+            //Port = "3306";
             //Server = "192.168.99.100"; //ip serwera; xampp ->"127.0.0.1"
             Login = login;
             Password = password;
@@ -42,26 +45,81 @@ namespace WindowsFormsApplication1
 
         public string Login { get; set; }
 
+        public bool SSL { get; set; }
+
         public Grantee myPrivileges;
 
         public List<String> ListTabels { get; set; }
 
         public List<Grantee> ListGrantee { get; set; }
 
-        public MySqlConnection connection = null;
-        public MySqlConnection Connection
+        public MySqlConnection connection { get; set; }
+
+        void readConfiguration()
         {
-            get { return connection; }
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader("config.txt"))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    String line = sr.ReadToEnd();
+                    getConfiguration(line);
+                    Console.WriteLine(line);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        void getConfiguration(String line)
+        {
+            line.Trim();
+            var options = line.Split(';');
+
+            foreach(var opt in options)
+            {
+                setConfiguration(opt);              
+            }
+        }
+
+        void setConfiguration(String opt)
+        {
+              var value = opt.Split('=');
+
+                switch (value[0])
+                {
+                    case "Server":
+                        this.Server = value[1];
+                        break;
+                    case "Port":
+                        this.Port = value[1];
+                        break;
+                    case "SSL":
+                        this.SSL = (Int16.Parse(value[1]) == 1)? true : false;
+                        break;
+                    default:
+                        Console.WriteLine("The attribute not allowed: " + value[0]);
+                        break;
+                }
         }
 
         //łączenie z bazą danych
         public bool IsConnect()
         {
-            bool result = true;
-            if (Connection == null)
+            bool result = false;
+
+            if (connection == null)
             {
-                //string connetionString = string.Format("Server={0}; Port={1}; database={2}; user={3}; password={4}; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
-                string connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+                string connetionString;
+
+                if(SSL == true) //Z SSL
+                    connetionString = string.Format("Server={0}; Port={1}; database={2}; user={3}; password={4}; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
+                else//Bez SSL
+                    connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+
                 connection = new MySqlConnection(connetionString);
                 connection.Open();
                 result = true;
@@ -71,8 +129,7 @@ namespace WindowsFormsApplication1
         }
 
         public void Close()
-        {
-            
+        {            
             connection.Close();
         }
 
@@ -81,8 +138,8 @@ namespace WindowsFormsApplication1
         {
             List<String> list = new List<string>();
 
-            if (this.IsConnect() == true)
-            {
+          //  if (this.IsConnect() == true)
+          //  {
                 MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("SHOW TABLES FROM {0};", this.DatabaseName);
@@ -93,7 +150,7 @@ namespace WindowsFormsApplication1
                     list.Add(myReader.GetString(0));
                 }
                 myReader.Close();
-            }
+          //  }
 
             //ListTabels = list;
             return list;
@@ -104,8 +161,8 @@ namespace WindowsFormsApplication1
         {
             List<String> list = new List<string>();
 
-            if (this.IsConnect() == true)
-            try{
+       //     if (this.IsConnect() == true)
+        //    try{
                 MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("select user from mysql.user where Host = '%';", this.DatabaseName); //localhost
@@ -116,11 +173,11 @@ namespace WindowsFormsApplication1
                     list.Add(myReader.GetString(0));
                 }
                 myReader.Close();
-            }
-            catch(Exception e)
-            {
-
-            }
+           // }
+     //       catch(Exception e)
+     //       {
+//
+    //        }
 
             return list;
         }
@@ -131,8 +188,8 @@ namespace WindowsFormsApplication1
         {
             List<Grantee> list = new List<Grantee>();
 
-            if (this.IsConnect() == true)
-            {
+    //        if (this.IsConnect() == true)
+     //       {
                 MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
@@ -157,7 +214,7 @@ namespace WindowsFormsApplication1
 
                 myReader.Close();
 
-            }
+    //        }
 
             return list;
         }
@@ -171,8 +228,8 @@ namespace WindowsFormsApplication1
                 list.Add(new Grantee(user));
             }
 
-            if (this.IsConnect() == true)
-            {
+      //      if (this.IsConnect() == true)
+      //      {
 
                 string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
                 MySqlConnection myConnection = new MySqlConnection(connectionString);
@@ -210,58 +267,10 @@ namespace WindowsFormsApplication1
                 //}
                     myConnection.Close();
 
-            }
+       //     }
 
             return list;
         }
-
-        // <------------------------------------ NOTATKI ----------------------------------------------->
-        //SELECT * FROM mysql.db WHERE Db = 'bsk'
-        //GRANT UPDATE ON bsk.user TO damian@localhost
-
-        //SELECT * FROM `db`
-        //show tabels
-
-        //uprawnienia
-        //show grants for 'user'@'host'
-        /*SELECT GRANTEE, PRIVILEGE_TYPE FROM information_schema.user_privileges;
-            SELECT User,Host,Db FROM mysql.db;*/
-       
-        //taki tam przykłąd
-        public void Select(string filename)
-        {
-            //cmd.CommandText = "SELECT count(*) from tbUser WHERE UserName = @username and password=@password";
-            //command.Parameters.Add("@username", txtUserName.Text);
-            //command.Parameters.Add("@password", txtPassword.Text);
-            //var count = cmd.ExecuteScalar();
-            string query = "SELECT * FROM banners WHERE file = '" + filename + "'";
-
-            //open connection
-            if (this.IsConnect() == true) // OpenConnection == isConection
-            {
-                //create command and assign the query and connection from the constructor
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                //Get the DataReader from the comment using ExecuteReader
-                MySqlDataReader myReader = cmd.ExecuteReader();
-                while (myReader.Read())
-                {
-                    //Use GetString etc depending on the column datatypes.
-                    Console.WriteLine(myReader.GetInt32(0));
-                }
-                myReader.Close();
-                //close connection
-                //this.CloseConnection();
-            }
-        }
-
-        //rejestracja
-
-        //GRANT SELECT, INSERT ON bsk.ksiazka TO 'Marta'@'localhost';
-
-        //CREATE USER 'Franek'@'%' IDENTIFIED BY 'pass';
-        //GRANT ALL ON bsk.* TO 'Franek'@'%';
-        //GRANT ALL ON mysql.* TO 'Franek'@'%';
 
         public bool comparisonTabels(List<string> list)
         {

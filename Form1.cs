@@ -16,23 +16,19 @@ namespace WindowsFormsApplication1
     public partial class Form1 : Form
     {
         DBConnection connection;
-        ArrayList task;
+        Task task;
         String chosenTable;
-
-
-        CancellationTokenSource ts;
-        CancellationToken ct;
 
         public Form1()
         {
             InitializeComponent();
-
 
             // wyświetlanie loginform i pobranie nowego połaćzenia
             LoginForm form = new LoginForm();
             form.ShowDialog();
             connection = form.connection;
 
+            while (connection == null);
 
 
             if (connection != null)
@@ -41,12 +37,7 @@ namespace WindowsFormsApplication1
                 connection.ListTabels = connection.GetTablesName();
                 DelegateMethod(connection.GetTablesName());
 
-                task = new ArrayList();
-
-                //foreach (var i in connection.ListTabels)
-                string i = "Autor";
-                    task.Add( Task.Factory.StartNew(() => chceckIfPrivilageChange(i, ct)));
-                    //Task task = Task.Run(() => chceckIfPrivilageChange("ksiazka"));
+                task = Task.Run(() => chceckIfPrivilageChange());
             }
         }
 
@@ -64,33 +55,6 @@ namespace WindowsFormsApplication1
                     }
                 }
                 Thread.Sleep(1000);
-            }
-        }
-
-        private void chceckIfPrivilageChange(String nameTable, CancellationToken ct)
-        {
-
-            while (true)
-            {
-               // if (chosenTable == nameTable)
-               // {
-                var list = connection.GetTablePrivilegesAllUsers(chosenTable);
-                    if (dataGridView2.InvokeRequired)
-                    {
-                        if (connection.isGranteeListTheSame(list))
-                        {
-                            connection.ListGrantee = list;
-                            dataGridView2.BeginInvoke((new Delegate(refreshPreviligeTabele)), list);
-                        }
-                    }
-                    Thread.Sleep(2000);
-                    if (ct.IsCancellationRequested)
-                    {
-                        // another thread decided to cancel
-                        Console.WriteLine("task canceled");
-                        break;
-                    }
-                //}
             }
         }
 
@@ -115,6 +79,23 @@ namespace WindowsFormsApplication1
 
         }
 
+        private void chceckIfPrivilageChange()
+        {
+            while (true)
+            {
+                var list = connection.GetTablePrivilegesAllUsers(chosenTable);
+                if (dataGridView2.InvokeRequired)
+                {
+                    if (connection.isGranteeListTheSame(list))
+                    {
+                        connection.ListGrantee = list;
+                        dataGridView2.BeginInvoke((new Delegate(refreshPreviligeTabele)), list);
+                    }
+                }
+                Thread.Sleep(3000);
+            }
+        }
+
         public delegate void Delegate(List<Grantee> myControl);
 
         private void refreshPreviligeTabele(List<Grantee> list)
@@ -122,7 +103,6 @@ namespace WindowsFormsApplication1
             dataGridView2.Rows.Clear();
             dataGridView2.Refresh();
 
-            connection.ListGrantee = list;
             foreach (var tabel in list)
             {
                 dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable, tabel.TakeOver, tabel.TakeOverIsGrantable);
