@@ -518,5 +518,23 @@ namespace WindowsFormsApplication1
              myConnection.Close();
              disableChceckboxes();*/
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            string login = textBox1.Text;
+
+            foreach (DataGridViewRow row in dataGridView2.Rows)
+            {
+                
+                if (row.Cells[0].Value.ToString().IndexOf(login) == -1)
+                {
+                    row.Visible = false;                    
+                }
+                else
+                {
+                    row.Visible = true;   
+                }
+            }
+        }
     }
 }

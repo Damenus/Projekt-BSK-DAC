@@ -54,11 +54,13 @@
             this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.checkBox10 = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -295,16 +297,6 @@
             this.checkBox8.Text = "możliwość przekazania";
             this.checkBox8.UseVisualStyleBackColor = true;
             // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(189, 406);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(144, 23);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Przejmij uprawnienia";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -342,11 +334,40 @@
             this.checkBox10.Text = "możliwość przekazania";
             this.checkBox10.UseVisualStyleBackColor = true;
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(983, 267);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(113, 20);
+            this.textBox1.TabIndex = 23;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(906, 270);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 13);
+            this.label3.TabIndex = 24;
+            this.label3.Text = "Użytkoniwk";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(189, 406);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(144, 23);
+            this.button2.TabIndex = 18;
+            this.button2.Text = "Przejmij uprawnienia";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1146, 469);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.checkBox10);
             this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.statusStrip1);
@@ -395,7 +416,6 @@
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.CheckBox checkBox7;
         private System.Windows.Forms.CheckBox checkBox8;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.CheckBox checkBox9;
@@ -411,6 +431,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn TakeOver;
         private System.Windows.Forms.DataGridViewTextBoxColumn TakeOverIsGrantable;
         private System.Windows.Forms.CheckBox checkBox10;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button2;
     }
 }
 
