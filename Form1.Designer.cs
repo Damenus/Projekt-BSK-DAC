@@ -60,7 +60,6 @@
             this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -338,7 +337,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(983, 267);
+            this.textBox1.Location = new System.Drawing.Point(996, 21);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(113, 20);
             this.textBox1.TabIndex = 23;
@@ -347,22 +346,12 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(906, 270);
+            this.label3.Location = new System.Drawing.Point(919, 24);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 13);
             this.label3.TabIndex = 24;
             this.label3.Text = "Użytkownik";
             this.label3.Click += new System.EventHandler(this.label3_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(189, 406);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(144, 23);
-            this.button2.TabIndex = 18;
-            this.button2.Text = "Przejmij uprawnienia";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
@@ -374,7 +363,6 @@
             this.Controls.Add(this.checkBox10);
             this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.button2);
             this.Controls.Add(this.checkBox8);
             this.Controls.Add(this.checkBox7);
             this.Controls.Add(this.checkBox6);
@@ -436,7 +424,6 @@
         private System.Windows.Forms.CheckBox checkBox10;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button2;
     }
 }
 
