@@ -8,8 +8,9 @@ namespace WindowsFormsApplication1
 {   //trzymanie informacji o uprawnieniach, by móc łatwo wyświetlić
     public class Grantee
     {
-        public Grantee(String name) 
+        public Grantee(String name)
         {
+            fromWho = new Dictionary<string, string>();
             this.UserName = name;
 
             this.Select = false;
@@ -26,8 +27,9 @@ namespace WindowsFormsApplication1
 
         }
 
-        public Grantee(String name, String privilege, String grantable)
+        public Grantee(String name, String privilege, String grantable, String from)
         {
+            fromWho = new Dictionary<string, string>();
             this.UserName = name;
 
             this.Select = false;
@@ -41,9 +43,9 @@ namespace WindowsFormsApplication1
             this.DeleteIsGrantable = false;
             this.InsertIsGrantable = false;
             this.TakeOverIsGrantable = false;
-            
 
-            SetPrivileges(privilege, grantable);
+
+            SetPrivileges(privilege, grantable, from);
 
         }
 
@@ -61,7 +63,8 @@ namespace WindowsFormsApplication1
         public bool DeleteIsGrantable { get; set; }
         public bool InsertIsGrantable { get; set; }
         public bool TakeOverIsGrantable { get; set; }
-        public void SetPrivileges(String privileges, String grantable)
+        public Dictionary<string, string> fromWho;
+        public void SetPrivileges(String privileges, String grantable, String from)
         {
             //zamian YES/NO na true/false
             bool value = (grantable == "YES") ? true : false;
@@ -89,11 +92,15 @@ namespace WindowsFormsApplication1
                 this.Insert = true;
                 this.InsertIsGrantable = value;
             }
-            else if(privileges =="TAKEOVER")
+            else if (privileges == "TAKEOVER")
             {
                 this.TakeOver = true;
                 this.TakeOverIsGrantable = value;
             }
+            if (fromWho.ContainsKey(privileges))
+                fromWho[privileges] = from;
+            else
+                fromWho.Add(privileges, from);
         }
 
     }
