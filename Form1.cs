@@ -27,17 +27,14 @@ namespace WindowsFormsApplication1
             LoginForm form = new LoginForm();
             form.ShowDialog();
             connection = form.connection;
-
-            while (connection == null);
-
-
+          
             if (connection != null)
             {
                 toolStripStatusLabel1.Text = "Jesteś zalogowany jako " + connection.Login;
                 connection.ListTabels = connection.GetTablesName();
                 DelegateMethod(connection.GetTablesName());
 
-            //    task = Task.Run(() => chceckIfPrivilageChange());
+               // task = Task.Run(() => chceckIfPrivilageChange());
             }
         }
 
@@ -155,7 +152,7 @@ namespace WindowsFormsApplication1
             MySqlConnection myConnection = new MySqlConnection(connectionString);
             MySqlCommand cmd = myConnection.CreateCommand();
             myConnection.Open();
-            cmd.CommandText = string.Format("UPDATE uprawnienia.user_privileges SET `GRANTEE`=\"{0}\" WHERE GRANTEE=\"{1}\";", userName, myUserName);
+            cmd.CommandText = string.Format("UPDATE uprawnienia.user_privileges SET `GRANTEE`=\"{0}\" WHERE GRANTEE=\"{1}\" AND IS_GRANTABLE='YES';", userName, myUserName);
             cmd.ExecuteReader();
             myConnection.Close();
 
@@ -460,14 +457,15 @@ namespace WindowsFormsApplication1
                // if (connection.myPrivileges.UpdateIsGrantable) //jeżeli możemy nadawać uprawnienia
                     foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
                     {
-                        if (user.Update && user.fromWho["TAKEOVER"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
+                        if (user.TakeOver && user.fromWho["TAKEOVER"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
                         {
                             takeBackPrivilege(user.UserName, privilege, tableName);
                         }
                     }
+                    var myUserNameOver = "'1" + userName + "'@'%'";
                 myConnection.Open();
-                cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND PRIVILEGE_TYPE = '{1}';",
-                userName, tableName, privilege); //usuwamy swoje uprawnienie z każdej tabeli, ponieważ dotyczy to przejmowania, które jest globalne
+                cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND PRIVILEGE_TYPE = '{2}';",
+                myUserNameOver, tableName, privilege); //usuwamy swoje uprawnienie z każdej tabeli, ponieważ dotyczy to przejmowania, które jest globalne
                 cmd1.ExecuteReader();
                 myConnection.Close();
                 return;
@@ -534,6 +532,28 @@ namespace WindowsFormsApplication1
                 {
                     row.Visible = true;   
                 }
+            }
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString() == "True")
+            {
+                dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].Style = new DataGridViewCellStyle { ForeColor = Color.Green, BackColor = Color.LightGreen };
+            }
+            else
+            {
+                dataGridView2.Rows[e.RowIndex].Cells[e.ColumnIndex].Style = dataGridView1.DefaultCellStyle;
             }
         }
     }

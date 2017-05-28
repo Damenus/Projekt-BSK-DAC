@@ -124,6 +124,8 @@
             this.dataGridView2.Size = new System.Drawing.Size(997, 163);
             this.dataGridView2.TabIndex = 3;
             this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellClick);
+            this.dataGridView2.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentClick);
+            this.dataGridView2.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView2_CellFormatting);
             // 
             // Login
             // 
@@ -349,7 +351,8 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 13);
             this.label3.TabIndex = 24;
-            this.label3.Text = "Użytkoniwk";
+            this.label3.Text = "Użytkownik";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // button2
             // 

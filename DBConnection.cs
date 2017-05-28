@@ -163,7 +163,12 @@ namespace WindowsFormsApplication1
 
        //     if (this.IsConnect() == true)
         //    try{
-                MySqlCommand cmd = connection.CreateCommand();
+        //    string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+        //    MySqlConnection myConnection = new MySqlConnection(connectionString);
+
+           // myConnection.Open();
+
+            MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("select user from mysql.user where Host = '%';", this.DatabaseName); //localhost
 
@@ -173,6 +178,8 @@ namespace WindowsFormsApplication1
                     list.Add(myReader.GetString(0));
                 }
                 myReader.Close();
+
+         //       myConnection.Close();
            // }
      //       catch(Exception e)
      //       {
@@ -316,6 +323,9 @@ namespace WindowsFormsApplication1
             else if (a.UpdateIsGrantable != b.UpdateIsGrantable) result = false;
             else if (a.DeleteIsGrantable != b.DeleteIsGrantable) result = false;
             else if (a.InsertIsGrantable != b.InsertIsGrantable) result = false;
+
+            else if (a.TakeOver != b.TakeOver) result = false;
+            else if (a.TakeOverIsGrantable != b.TakeOverIsGrantable) result = false;
 
             return result;
         }

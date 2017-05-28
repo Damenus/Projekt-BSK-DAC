@@ -57,5 +57,15 @@ namespace WindowsFormsApplication1
 
         }
 
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoginForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
+        }
+
     }
 }
