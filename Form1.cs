@@ -27,14 +27,14 @@ namespace WindowsFormsApplication1
             LoginForm form = new LoginForm();
             form.ShowDialog();
             connection = form.connection;
-          
+
             if (connection != null)
             {
                 toolStripStatusLabel1.Text = "Jesteś zalogowany jako " + connection.Login;
                 connection.ListTabels = connection.GetTablesName();
                 DelegateMethod(connection.GetTablesName());
 
-               // task = Task.Run(() => chceckIfPrivilageChange());
+                task = Task.Run(() => chceckIfPrivilageChange());
             }
         }
 
@@ -143,7 +143,7 @@ namespace WindowsFormsApplication1
         }
         private void giveAllPrivileges()//oddaje wszystkie uprawnienia i odbiera wszystkim, którzy byli pod spodem
         {
-           // var list = connection.GetTablePrivilegesAllUsers(chosenTable);
+            // var list = connection.GetTablePrivilegesAllUsers(chosenTable);
 
 
             var userName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'%'";
@@ -153,6 +153,10 @@ namespace WindowsFormsApplication1
             MySqlCommand cmd = myConnection.CreateCommand();
             myConnection.Open();
             cmd.CommandText = string.Format("UPDATE uprawnienia.user_privileges SET `GRANTEE`=\"{0}\" WHERE GRANTEE=\"{1}\" AND IS_GRANTABLE='YES';", userName, myUserName);
+            cmd.ExecuteReader();
+            myConnection.Close();
+            myConnection.Open();
+            cmd.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE=\"{0}\" AND PRIVILEGE_TYPE='TAKEOVER';", userName);
             cmd.ExecuteReader();
             myConnection.Close();
 
@@ -196,55 +200,59 @@ namespace WindowsFormsApplication1
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if (dataGridView2.CurrentRow.Cells[9].Value.ToString() == "True")
+            if (dataGridView2.CurrentCell.ColumnIndex == 0)
             {
-                takeOver(); //usuwanie uprawnien przejmującego
-                giveAllPrivileges(); //oddanie uprawnień 
-                return;
-            }
-            bool giveGrantable = false;
-            if (checkBox1.Checked && connection.myPrivileges.Insert.ToString() == "True")
-            {
-                if (checkBox5.Checked && connection.myPrivileges.InsertIsGrantable.ToString() == "True")
-                    giveGrantable = true;
-                else
-                    giveGrantable = false;
-                grant("INSERT", giveGrantable);
-            }
-            if (checkBox2.Checked && connection.myPrivileges.Delete.ToString() == "True")
-            {
-                if (checkBox6.Checked && connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
-                    giveGrantable = true;
-                else
-                    giveGrantable = false;
-                grant("DELETE", giveGrantable);
-            }
-            if (checkBox3.Checked && connection.myPrivileges.Update.ToString() == "True")
-            {
-                if (checkBox7.Checked && connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
-                    giveGrantable = true;
-                else
-                    giveGrantable = false;
-                grant("UPDATE", giveGrantable);
-            }
-            if (checkBox4.Checked && connection.myPrivileges.Select.ToString() == "True")
-            {
-                if (checkBox8.Checked && connection.myPrivileges.SelectIsGrantable.ToString() == "True")
-                    giveGrantable = true;
-                else
-                    giveGrantable = false;
-                grant("SELECT", giveGrantable);
-            }
-            if (checkBox9.Checked && connection.myPrivileges.TakeOver.ToString() == "True")
-            {
-                if (checkBox10.Checked && connection.myPrivileges.TakeOverIsGrantable.ToString() == "True")
+                if (dataGridView2.CurrentRow.Cells[9].Value.ToString() == "True")
                 {
-                    giveGrantable = true;
+                    takeOver(); //usuwanie uprawnien przejmującego
+                    giveAllPrivileges(); //oddanie uprawnień 
+                    return;
                 }
-                else
-                    giveGrantable = false;
-                grant("TAKEOVER", giveGrantable);
+                bool giveGrantable = false;
+                if (checkBox1.Checked && connection.myPrivileges.Insert.ToString() == "True")
+                {
+                    if (checkBox5.Checked && connection.myPrivileges.InsertIsGrantable.ToString() == "True")
+                        giveGrantable = true;
+                    else
+                        giveGrantable = false;
+                    grant("INSERT", giveGrantable);
+                }
+                if (checkBox2.Checked && connection.myPrivileges.Delete.ToString() == "True")
+                {
+                    if (checkBox6.Checked && connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
+                        giveGrantable = true;
+                    else
+                        giveGrantable = false;
+                    grant("DELETE", giveGrantable);
+                }
+                if (checkBox3.Checked && connection.myPrivileges.Update.ToString() == "True")
+                {
+                    if (checkBox7.Checked && connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
+                        giveGrantable = true;
+                    else
+                        giveGrantable = false;
+                    grant("UPDATE", giveGrantable);
+                }
+                if (checkBox4.Checked && connection.myPrivileges.Select.ToString() == "True")
+                {
+                    if (checkBox8.Checked && connection.myPrivileges.SelectIsGrantable.ToString() == "True")
+                        giveGrantable = true;
+                    else
+                        giveGrantable = false;
+                    grant("SELECT", giveGrantable);
+                }
+                if (checkBox9.Checked && connection.myPrivileges.TakeOver.ToString() == "True")
+                {
+                    if (checkBox10.Checked && connection.myPrivileges.TakeOverIsGrantable.ToString() == "True")
+                    {
+                        giveGrantable = true;
+                    }
+                    else
+                        giveGrantable = false;
+                    grant("TAKEOVER", giveGrantable);
+                }
             }
+            uncheck();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -257,7 +265,7 @@ namespace WindowsFormsApplication1
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(connection.IsConnect())
+            if (connection.IsConnect())
                 connection.Close();
         }
         private void disableAllCheckboxes()
@@ -292,7 +300,6 @@ namespace WindowsFormsApplication1
             checkBox10.Enabled = false;
             checkBox10.Checked = false;
 
-            button2.Enabled = false;
 
         }
         private void uncheck()
@@ -394,12 +401,8 @@ namespace WindowsFormsApplication1
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(dataGridView2.CurrentRow != null)
-            disableChceckboxes();
-            if (connection.myPrivileges.TakeOverIsGrantable.ToString() == "True" && dataGridView2.CurrentCell != null)
-                button2.Enabled = true;
-            else
-                button2.Enabled = false;
+            if (dataGridView2.CurrentRow != null)
+                disableChceckboxes();
         }
 
         private void takeBackPrivilege(string userName, string privilege, string tableName)//kto traci, co traci, gdzie traci
@@ -410,59 +413,59 @@ namespace WindowsFormsApplication1
             var usersPrivileges = connection.GetTablePrivilegesAllUsers(tableName);
             if (privilege == "SELECT")
             {
-              //  if (connection.myPrivileges.SelectIsGrantable) //jeżeli możemy nadawać uprawnienia
-                    foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                //  if (connection.myPrivileges.SelectIsGrantable) //jeżeli możemy nadawać uprawnienia
+                foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                {
+                    if (user.Select && user.fromWho["SELECT"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
                     {
-                        if (user.Select && user.fromWho["SELECT"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
-                        {
-                            takeBackPrivilege(user.UserName, privilege, tableName);
-                        }
+                        takeBackPrivilege(user.UserName, privilege, tableName);
                     }
+                }
             }
             else if (privilege == "INSERT")
             {
-            //    if (connection.myPrivileges.InsertIsGrantable) //jeżeli możemy nadawać uprawnienia
-                    foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                //    if (connection.myPrivileges.InsertIsGrantable) //jeżeli możemy nadawać uprawnienia
+                foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                {
+                    if (user.Insert && user.fromWho["INSERT"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
                     {
-                        if (user.Insert && user.fromWho["INSERT"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
-                        {
-                            takeBackPrivilege(user.UserName, privilege, tableName);
-                        }
+                        takeBackPrivilege(user.UserName, privilege, tableName);
                     }
+                }
             }
             else if (privilege == "DELETE")
             {
-             //   if (connection.myPrivileges.DeleteIsGrantable) //jeżeli możemy nadawać uprawnienia
-                    foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                //   if (connection.myPrivileges.DeleteIsGrantable) //jeżeli możemy nadawać uprawnienia
+                foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                {
+                    if (user.Delete && user.fromWho["DELETE"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
                     {
-                        if (user.Delete && user.fromWho["DELETE"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
-                        {
-                            takeBackPrivilege(user.UserName, privilege, tableName);
-                        }
+                        takeBackPrivilege(user.UserName, privilege, tableName);
                     }
+                }
             }
             else if (privilege == "UPDATE")
             {
-              //  if (connection.myPrivileges.UpdateIsGrantable) //jeżeli możemy nadawać uprawnienia
-                    foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                //  if (connection.myPrivileges.UpdateIsGrantable) //jeżeli możemy nadawać uprawnienia
+                foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                {
+                    if (user.Update && user.fromWho["UPDATE"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
                     {
-                        if (user.Update && user.fromWho["UPDATE"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
-                        {
-                            takeBackPrivilege(user.UserName, privilege, tableName);
-                        }
+                        takeBackPrivilege(user.UserName, privilege, tableName);
                     }
+                }
             }
             else if (privilege == "TAKEOVER")
             {
-               // if (connection.myPrivileges.UpdateIsGrantable) //jeżeli możemy nadawać uprawnienia
-                    foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                // if (connection.myPrivileges.UpdateIsGrantable) //jeżeli możemy nadawać uprawnienia
+                foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
+                {
+                    if (user.TakeOver && user.fromWho["TAKEOVER"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
                     {
-                        if (user.TakeOver && user.fromWho["TAKEOVER"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
-                        {
-                            takeBackPrivilege(user.UserName, privilege, tableName);
-                        }
+                        takeBackPrivilege(user.UserName, privilege, tableName);
                     }
-                    var myUserNameOver = "'1" + userName + "'@'%'";
+                }
+                var myUserNameOver = "'1" + userName + "'@'%'";
                 myConnection.Open();
                 cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND PRIVILEGE_TYPE = '{2}';",
                 myUserNameOver, tableName, privilege); //usuwamy swoje uprawnienie z każdej tabeli, ponieważ dotyczy to przejmowania, które jest globalne
@@ -479,58 +482,20 @@ namespace WindowsFormsApplication1
             myConnection.Close();
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            /* string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
-             MySqlConnection myConnection = new MySqlConnection(connectionString);
-             myConnection.Open();
-             String userName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'%'";
-             String myUserName = "'" + connection.Login + "'@'%'";
-             MySqlCommand cmd1 = myConnection.CreateCommand();
-         //usuwanie własnych uprawnień
-             cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND TABLE_NAME = '{1}';",
-                 myUserName, dataGridView1.CurrentCell.Value.ToString());
-             cmd1.ExecuteReader();
-             myConnection.Close();
-             //myConnection.Open();
-             //pobieranie zabieranych uprawnien i nadanie ich sobie
-             DataGridViewRow row = dataGridView2.CurrentRow;
-             MySqlCommand cmd2 = myConnection.CreateCommand();
-             for (int i = 1; i < 10; i+=2)
-             {
-               
-                 if (row.Cells[i].Value.ToString() == "True")
-                 {
-                     myConnection.Open();
-                     cmd1.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', '{3}');", myUserName, dataGridView1.CurrentCell.Value.ToString(), dataGridView2.Columns[i].HeaderText.ToString(), row.Cells[i + 1].Value.ToString() == "False" ? "NO" : "YES"); //dataGridView2.Rows[-1].Cells[i].Value.ToString()
-                     cmd1.ExecuteReader();
-                     myConnection.Close();
-                 }
-
-             }
-             //usuwanie uprawnień użytkownikowi, od którego przejmujemy
-             MySqlCommand cmd3 = connection.connection.CreateCommand();
-             myConnection.Open();
-             cmd1.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND TABLE_NAME = '{1}'; ", userName, dataGridView1.CurrentCell.Value.ToString());
-             cmd1.ExecuteReader();
-             myConnection.Close();
-             disableChceckboxes();*/
-        }
-
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             string login = textBox1.Text;
 
             foreach (DataGridViewRow row in dataGridView2.Rows)
             {
-                
+
                 if (row.Cells[0].Value.ToString().IndexOf(login) == -1)
                 {
-                    row.Visible = false;                    
+                    row.Visible = false;
                 }
                 else
                 {
-                    row.Visible = true;   
+                    row.Visible = true;
                 }
             }
         }
