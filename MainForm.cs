@@ -18,7 +18,9 @@ namespace WindowsFormsApplication1
         DBConnection connection;
         private ArrayList kolumny;
         Task task;
+
         String chosenTable;
+        String chosenUser;
 
         public MainForm()
         {
@@ -38,15 +40,17 @@ namespace WindowsFormsApplication1
                 userNameRefresh(connection.GetUsers());
                 refreshPreviligeTabele(connection.GetTablePrivilegesAllUsersAllTabel());
 
-                //task = Task.Run(() => chceckIfChange());
+                task = Task.Run(() => chceckIfChange());
             }
         }
 
 
         private void prepareDataGridView2()
         {
+            //dataGridView2.Columns.Clear(); czyszczenie i wstawianie od nowa
 
-            var tables = connection.GetTablesName();
+
+            var tables = connection.ListTabels;
             kolumny = new ArrayList ();
 
             foreach (var nameTable in tables)
@@ -89,9 +93,9 @@ namespace WindowsFormsApplication1
                 dataGridView2.Rows.Add(u);
             }
 
-            connection.GetTablePrivilegesAllUsersAllTabel();
+            var priviliges = connection.GetTablePrivilegesAllUsersAllTabel();
 
-            foreach (var g in connection.ListGrantee)
+            foreach (var g in priviliges)
             {
                 String searchValue = g.UserName;
 
@@ -159,40 +163,65 @@ namespace WindowsFormsApplication1
             //dataGridView3_CellClick(dataGridView1, new DataGridViewCellEventArgs(0, rem));
         }
 
+        public bool compareList(List<string> list1, List<string> list2)
+        {
+            if (list1.Count != list2.Count)
+                return true;
+
+            int zliczamIleTakichSamych = 0;
+            for (int i = 0; i < list1.Count; i++)
+            {
+                for (int j = 0; j < list2.Count; j++)
+                {
+                    if (list1[i] == list2[i])
+                    {
+                        zliczamIleTakichSamych++;
+                    }
+                }
+            }
+
+            if (zliczamIleTakichSamych != list1.Count)
+                return false;
+            else
+                return true;
+        }
+
         private void chceckIfChange()
         {
             while (true)
             {
                 var newTables = connection.GetTablesName();
                 var newUsers = connection.GetUsers();
+                var newPreviliges = connection.GetTablePrivilegesAllUsersAllTabel();
 
                 //zmiana przywiejów
-                var list = connection.GetTablePrivilegesAllUsers(chosenTable);
                 if (dataGridView2.InvokeRequired)
                 {
-                    if (connection.isGranteeListTheSame(list))
+                    if (connection.isGranteeListTheSame(newPreviliges))
                     {
-                        connection.ListGrantee = list;
-                        dataGridView2.BeginInvoke((new PreviligeDelegate(refreshPreviligeTabele)), list);
+                        connection.ListGrantee = newPreviliges;
+                        dataGridView2.BeginInvoke((new PreviligeDelegate(refreshPreviligeTabele)), newPreviliges);
                     }
                 }
 
                 //zmiana tabeli
                 if (dataGridView1.InvokeRequired)
                 {
-                    if (connection.ListTabels != newTables)
+                    if (compareList(connection.ListTabels, newTables))
                     {
                         connection.ListTabels = newTables;
                         dataGridView1.BeginInvoke((new UserDelegate(tableNameRefresh)), newTables);
+                        dataGridView2.BeginInvoke((new PreviligeDelegate(refreshPreviligeTabele)), newPreviliges);
                     }
                 }
                 //zmian użytkonikow
                 if (dataGridView3.InvokeRequired)
                 {
-                    if (connection.ListUsers != newUsers)
+                    if (compareList(newUsers, connection.ListUsers))
                     {
                         connection.ListUsers = newUsers;
                         dataGridView3.BeginInvoke((new UserDelegate(userNameRefresh)), newUsers);
+                        dataGridView2.BeginInvoke((new PreviligeDelegate(refreshPreviligeTabele)), newPreviliges);
                     }
                 }
 
@@ -204,8 +233,8 @@ namespace WindowsFormsApplication1
         //nadawanie uprawnień
         private void grant(string privilage, bool grantable)
         {
-            var granteeName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'%'";
-            var tableName = dataGridView1.CurrentCell.Value.ToString();
+            var granteeName = "'" + chosenUser + "'@'%'";
+            var tableName = chosenTable;
             string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
             MySqlConnection myConnection = new MySqlConnection(connectionString);
             MySqlCommand cmd = myConnection.CreateCommand();
@@ -237,6 +266,7 @@ namespace WindowsFormsApplication1
             cmd.ExecuteReader();
             myConnection.Close();
         }
+
         private void giveAllPrivileges()//oddaje wszystkie uprawnienia i odbiera wszystkim, którzy byli pod spodem
         {
             // var list = connection.GetTablePrivilegesAllUsers(chosenTable);
@@ -294,6 +324,7 @@ namespace WindowsFormsApplication1
                 }
             }
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (dataGridView2.CurrentCell.ColumnIndex == 0)
@@ -350,6 +381,7 @@ namespace WindowsFormsApplication1
             }
             uncheck();
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
             dataGridView1.AllowUserToAddRows = false;
@@ -357,11 +389,13 @@ namespace WindowsFormsApplication1
             dataGridView1.MultiSelect = false;
             dataGridView2.MultiSelect = false;
         }
+
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (connection != null)
                 connection.Close();
         }
+
         private void disableAllCheckboxes()
         {
             checkBox1.Enabled = false;
@@ -568,28 +602,23 @@ namespace WindowsFormsApplication1
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            disableAllCheckboxes();
+          //  disableAllCheckboxes();
             uncheck();
-            dataGridView2.Rows.Clear();
-            dataGridView2.Refresh();
+
             if (e.RowIndex >= 0)
             {
                 chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
-                var nameTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
-                var list2 = connection.GetTablePrivilegesAllUsers(nameTable);
-                connection.ListGrantee = list2;
-                foreach (var tabel in list2)
-                {
-                    if (tabel.UserName == connection.Login)
-                        connection.myPrivileges = tabel;
+            }
+        }
 
-                  
-                    dataGridView2.Rows.Add(tabel.UserName, tabel.Select, tabel.SelectIsGrantable, tabel.Insert, tabel.InsertIsGrantable, tabel.Delete, tabel.DeleteIsGrantable, tabel.Update, tabel.UpdateIsGrantable, tabel.TakeOver, tabel.TakeOverIsGrantable);
-                
-                
-                }
-                if (dataGridView2.RowCount > 0)
-                    dataGridView2.Rows[0].Selected = false;
+        private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+         //   disableAllCheckboxes();
+            uncheck();
+
+            if (e.RowIndex >= 0)
+            {
+                chosenUser = dataGridView3.Rows[e.RowIndex].Cells["User"].Value.ToString();
             }
         }
     }

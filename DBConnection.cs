@@ -112,6 +112,7 @@ namespace WindowsFormsApplication1
 
                 this.ListTabels = GetTablesName();
                 this.ListUsers = GetUsers();
+                this.ListGrantee = GetTablePrivilegesAllUsersAllTabel();
             } 
         }
 
@@ -290,7 +291,7 @@ namespace WindowsFormsApplication1
                 String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
                 String privilegeType = myReader.GetString(1);
                 String isGrantable = myReader.GetString(2);
-                String table = myReader.GetString(4);
+                String table = myReader.GetString(4).ToLower();
                 String from = myReader.GetString(3);
 
                 //czy istnieje już taki
@@ -307,7 +308,7 @@ namespace WindowsFormsApplication1
 
             myConnection.Close();
 
-            ListGrantee = list;
+            //ListGrantee = list;
 
             return list;
         }
@@ -333,7 +334,7 @@ namespace WindowsFormsApplication1
             if (ListGrantee != null)
                 foreach(var elementNew in list) {    
                     foreach(var elementOld in ListGrantee ) {
-                        if (elementNew.UserName == elementOld.UserName)
+                        if (elementNew.UserName == elementOld.UserName && elementNew.TableName == elementOld.TableName)
                             if (!isGranteeElementsTheSame(elementNew, elementOld))
                                 result = true;
                     }
@@ -358,6 +359,9 @@ namespace WindowsFormsApplication1
 
             else if (a.TakeOver != b.TakeOver) result = false;
             else if (a.TakeOverIsGrantable != b.TakeOverIsGrantable) result = false;
+
+          //  else if (a.TableName != b.TableName) result = false;
+          //  else if (a.UserName != b.UserName) result = false;
 
             return result;
         }
