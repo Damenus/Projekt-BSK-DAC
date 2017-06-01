@@ -44,7 +44,6 @@ namespace WindowsFormsApplication1
             }
         }
 
-
         private void prepareDataGridView2()
         {
             //dataGridView2.Columns.Clear(); czyszczenie i wstawianie od nowa
@@ -71,8 +70,8 @@ namespace WindowsFormsApplication1
             // 
             var TakeOverIsGrantable = new System.Windows.Forms.DataGridViewTextBoxColumn();
             kolumny.Add(TakeOverIsGrantable);
-            TakeOverIsGrantable.HeaderText = "TakeOverIsGrantable";
-            TakeOverIsGrantable.Name = "TakeOverIsGrantable";
+            TakeOverIsGrantable.HeaderText = "Przejmij";
+            TakeOverIsGrantable.Name = "Przejmij";
             TakeOverIsGrantable.ReadOnly = true;
             TakeOverIsGrantable.Width = 110;
             dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { TakeOverIsGrantable });
@@ -114,6 +113,9 @@ namespace WindowsFormsApplication1
 
                 int columnIndex = dataGridView2.Columns[g.TableName].Index;
                 dataGridView2.Rows[rowID].Cells[columnIndex].Value = g.wyswietlUprawnienia();
+
+                if(g.TakeOver && !g.TakeOverIsGrantable)
+                    dataGridView2.Rows[rowID].Cells[connection.ListTabels.Count + 1].Value = "Przejmij";
             }
         }
 
@@ -228,31 +230,32 @@ namespace WindowsFormsApplication1
                 Thread.Sleep(3000);
             }
         }
-
        
         //nadawanie uprawnień
         private void grant(string privilage, bool grantable)
         {
             var granteeName = "'" + chosenUser + "'@'%'";
             var tableName = chosenTable;
+
             string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
             MySqlConnection myConnection = new MySqlConnection(connectionString);
             MySqlCommand cmd = myConnection.CreateCommand();
+
             if (privilage == "TAKEOVER")
             {
                 if (!grantable)
-                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    foreach (var table in connection.ListTabels)
                     {
                         myConnection.Open();
-                        cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'NO', '{3}');", granteeName, row.Cells[0].Value.ToString(), privilage, connection.Login);
+                        cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'NO', '{3}');", granteeName, table, privilage, connection.Login);
                         cmd.ExecuteReader();
                         myConnection.Close();
                     }
                 else
-                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    foreach (var table in connection.ListTabels)
                     {
                         myConnection.Open();
-                        cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'YES', '{3}');", granteeName, row.Cells[0].Value.ToString(), privilage, connection.Login);
+                        cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'YES', '{3}');", granteeName, table, privilage, connection.Login);
                         cmd.ExecuteReader();
                         myConnection.Close();
                     }
@@ -263,17 +266,16 @@ namespace WindowsFormsApplication1
                 cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'NO', '{3}');", granteeName, tableName, privilage, connection.Login);
             else
                 cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'YES', '{3}');", granteeName, tableName, privilage, connection.Login);
+            
             cmd.ExecuteReader();
             myConnection.Close();
         }
 
-        private void giveAllPrivileges()//oddaje wszystkie uprawnienia i odbiera wszystkim, którzy byli pod spodem
+        private void giveAllPrivileges() //oddaje wszystkie uprawnienia i odbiera wszystkim, którzy byli pod spodem
         {
-            // var list = connection.GetTablePrivilegesAllUsers(chosenTable);
-
-
-            var userName = "'" + dataGridView2.CurrentCell.Value.ToString() + "'@'%'";
+            var userName = "'" + chosenUser + "'@'%'";
             var myUserName = "'" + connection.Login + "'@'%'";
+
             string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
             MySqlConnection myConnection = new MySqlConnection(connectionString);
             MySqlCommand cmd = myConnection.CreateCommand();
@@ -281,46 +283,48 @@ namespace WindowsFormsApplication1
             cmd.CommandText = string.Format("UPDATE uprawnienia.user_privileges SET `GRANTEE`=\"{0}\" WHERE GRANTEE=\"{1}\" AND IS_GRANTABLE='YES';", userName, myUserName);
             cmd.ExecuteReader();
             myConnection.Close();
-            myConnection.Open();
+            myConnection.Open();         
             cmd.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE=\"{0}\" AND PRIVILEGE_TYPE='TAKEOVER';", userName);
             cmd.ExecuteReader();
             myConnection.Close();
 
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            foreach (var tableName in connection.ListTabels)
             {
-                takeBackPrivilege(connection.Login, "SELECT", row.Cells[0].Value.ToString());
-                takeBackPrivilege(connection.Login, "INSERT", row.Cells[0].Value.ToString());
-                takeBackPrivilege(connection.Login, "DELETE", row.Cells[0].Value.ToString());
-                takeBackPrivilege(connection.Login, "UPDATE", row.Cells[0].Value.ToString());
-                takeBackPrivilege(connection.Login, "TAKEOVER", row.Cells[0].Value.ToString());
+                takeBackPrivilege(connection.Login, "SELECT", tableName);
+                takeBackPrivilege(connection.Login, "INSERT", tableName);
+                takeBackPrivilege(connection.Login, "DELETE", tableName);
+                takeBackPrivilege(connection.Login, "UPDATE", tableName);
+                takeBackPrivilege(connection.Login, "TAKEOVER", tableName);
             }
         }
+
         private void takeOver()
         {
-            string userName = dataGridView2.CurrentRow.Cells[0].Value.ToString();
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            string userName = chosenUser;
+
+            foreach (var tableName in connection.ListTabels)
             {
-                var usersPrivileges = connection.GetTablePrivilegesAllUsers(row.Cells[0].Value.ToString());
-                Grantee user = usersPrivileges.FindLast(x => x.UserName == userName); //szukamy uzytkownika, któremu usuwamy uprawnienia
+                Grantee user = connection.ListGrantee.Find(x => (x.UserName == userName) && (x.TableName == tableName)); ; //szukamy uzytkownika, któremu usuwamy uprawnienia
+                
                 if (user.Select)
                 {
-                    takeBackPrivilege(user.UserName, "SELECT", row.Cells[0].Value.ToString());
+                    takeBackPrivilege(user.UserName, "SELECT", tableName);
                 }
                 if (user.Insert)
                 {
-                    takeBackPrivilege(user.UserName, "INSERT", row.Cells[0].Value.ToString());
+                    takeBackPrivilege(user.UserName, "INSERT", tableName);
                 }
                 if (user.Delete)
                 {
-                    takeBackPrivilege(user.UserName, "DELETE", row.Cells[0].Value.ToString());
+                    takeBackPrivilege(user.UserName, "DELETE", tableName);
                 }
                 if (user.Update)
                 {
-                    takeBackPrivilege(user.UserName, "UPDATE", row.Cells[0].Value.ToString());
+                    takeBackPrivilege(user.UserName, "UPDATE", tableName);
                 }
                 if (user.TakeOver)
                 {
-                    takeBackPrivilege(user.UserName, "TAKEOVER", row.Cells[0].Value.ToString());
+                    takeBackPrivilege(user.UserName, "TAKEOVER", tableName);
                 }
             }
         }
@@ -329,7 +333,8 @@ namespace WindowsFormsApplication1
         {
             if (chosenTable != null && chosenUser != null)
             {
-                if (connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable)).TakeOver)
+                var uprawnieniaPrzekazywanemu = connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable));
+                if (uprawnieniaPrzekazywanemu.TakeOver)
                 {
                     takeOver(); //usuwanie uprawnien przejmującego
                     giveAllPrivileges(); //oddanie uprawnień 
