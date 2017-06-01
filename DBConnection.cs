@@ -18,11 +18,6 @@ namespace WindowsFormsApplication1
 {
     public class DBConnection
     {
-        public DBConnection()
-        {
-            ListTabels = new List<String> { };
-        }
-
         public DBConnection(string login, string password)
         {
             readConfiguration();
@@ -36,24 +31,18 @@ namespace WindowsFormsApplication1
         }
         
         public string Server { get; set;  }
-
         public string Port { get; set; }
-
         public string DatabaseName { get; set; }
-
         public string Password { get; set; }
-
         public string Login { get; set; }
-
         public bool SSL { get; set; }
 
-        public Grantee myPrivileges;
-
-        public List<String> ListTabels { get; set; }
-
-        public List<Grantee> ListGrantee { get; set; }
-
         public MySqlConnection connection { get; set; }
+
+        public Grantee myPrivileges;
+        public List<String> ListTabels { get; set; }
+        public List<String> ListUsers { get; set; }
+        public List<Grantee> ListGrantee { get; set; }      
 
         void readConfiguration()
         {
@@ -107,25 +96,23 @@ namespace WindowsFormsApplication1
         }
 
         //łączenie z bazą danych
-        public bool IsConnect()
-        {
-            bool result = false;
-
+        public void Connect()
+        {           
             if (connection == null)
             {
                 string connetionString;
 
                 if(SSL == true) //Z SSL
                     connetionString = string.Format("Server={0}; Port={1}; database={2}; user={3}; password={4}; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
-                else//Bez SSL
+                else //Bez SSL
                     connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
 
                 connection = new MySqlConnection(connetionString);
                 connection.Open();
-                result = true;
-            }
 
-            return result;
+                this.ListTabels = GetTablesName();
+                this.ListUsers = GetUsers();
+            } 
         }
 
         public void Close()
@@ -138,8 +125,8 @@ namespace WindowsFormsApplication1
         {
             List<String> list = new List<string>();
 
-          //  if (this.IsConnect() == true)
-          //  {
+            try
+            {
                 MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("SHOW TABLES FROM {0};", this.DatabaseName);
@@ -150,7 +137,11 @@ namespace WindowsFormsApplication1
                     list.Add(myReader.GetString(0));
                 }
                 myReader.Close();
-          //  }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Nie pobrano listy tabel!!!");
+            }
 
             //ListTabels = list;
             return list;
@@ -161,14 +152,9 @@ namespace WindowsFormsApplication1
         {
             List<String> list = new List<string>();
 
-       //     if (this.IsConnect() == true)
-        //    try{
-        //    string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
-        //    MySqlConnection myConnection = new MySqlConnection(connectionString);
-
-           // myConnection.Open();
-
-            MySqlCommand cmd = connection.CreateCommand();
+            try
+            {
+                MySqlCommand cmd = connection.CreateCommand();
 
                 cmd.CommandText = string.Format("select user from mysql.user where Host = '%';", this.DatabaseName); //localhost
 
@@ -179,12 +165,11 @@ namespace WindowsFormsApplication1
                 }
                 myReader.Close();
 
-         //       myConnection.Close();
-           // }
-     //       catch(Exception e)
-     //       {
-//
-    //        }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Nie pobrano listy uzytkownikow!!!");
+            }
 
             return list;
         }
@@ -276,6 +261,53 @@ namespace WindowsFormsApplication1
                 myConnection.Close();
 
             
+
+            return list;
+        }
+
+        public List<Grantee> GetTablePrivilegesAllUsersAllTabel()
+        {
+            List<Grantee> list = new List<Grantee>();            
+
+            foreach (var user in ListUsers)
+            {
+                foreach (var table in ListTabels)
+                {
+                    list.Add(new Grantee(user,table));
+                }
+            }
+
+            string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+            MySqlConnection myConnection = new MySqlConnection(connectionString);
+            myConnection.Open();
+
+            MySqlCommand cmd = myConnection.CreateCommand();
+            cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE, RECEIVED_FROM, TABLE_NAME FROM uprawnienia.user_privileges;");
+
+            MySqlDataReader myReader = cmd.ExecuteReader();
+            while (myReader.Read())
+            {
+                String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
+                String privilegeType = myReader.GetString(1);
+                String isGrantable = myReader.GetString(2);
+                String table = myReader.GetString(4);
+                String from = myReader.GetString(3);
+
+                //czy istnieje już taki
+                if (list.Exists(x => (x.UserName == userName) && (x.TableName == table)))
+                {
+                    list.Find(x => (x.UserName == userName) && (x.TableName == table)).SetPrivileges(privilegeType, isGrantable, from, table);
+                }
+                else //utworz jak nie istnieje
+                {
+                    list.Add(new Grantee(userName, privilegeType, isGrantable, from, table));
+                }
+            }
+            myReader.Close();
+
+            myConnection.Close();
+
+            ListGrantee = list;
 
             return list;
         }

@@ -265,7 +265,7 @@ namespace WindowsFormsApplication1
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (connection.IsConnect())
+            if (connection != null)
                 connection.Close();
         }
         private void disableAllCheckboxes()
