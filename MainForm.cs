@@ -327,50 +327,53 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (dataGridView2.CurrentCell.ColumnIndex == 0)
+            if (chosenTable != null && chosenUser != null)
             {
-                if (dataGridView2.CurrentRow.Cells[9].Value.ToString() == "True")
+                if (connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable)).TakeOver)
                 {
                     takeOver(); //usuwanie uprawnien przejmującego
                     giveAllPrivileges(); //oddanie uprawnień 
                     return;
                 }
+
+                var mojeUprawnienia = connection.ListGrantee.Find(x => (x.UserName == connection.Login) && (x.TableName == chosenTable));
+
                 bool giveGrantable = false;
-                if (checkBox1.Checked && connection.myPrivileges.Insert.ToString() == "True")
+                if (checkBox1.Checked && mojeUprawnienia.Insert.ToString() == "True")
                 {
-                    if (checkBox5.Checked && connection.myPrivileges.InsertIsGrantable.ToString() == "True")
+                    if (checkBox5.Checked && mojeUprawnienia.InsertIsGrantable.ToString() == "True")
                         giveGrantable = true;
                     else
                         giveGrantable = false;
                     grant("INSERT", giveGrantable);
                 }
-                if (checkBox2.Checked && connection.myPrivileges.Delete.ToString() == "True")
+                if (checkBox2.Checked && mojeUprawnienia.Delete.ToString() == "True")
                 {
-                    if (checkBox6.Checked && connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
+                    if (checkBox6.Checked && mojeUprawnienia.DeleteIsGrantable.ToString() == "True")
                         giveGrantable = true;
                     else
                         giveGrantable = false;
                     grant("DELETE", giveGrantable);
                 }
-                if (checkBox3.Checked && connection.myPrivileges.Update.ToString() == "True")
+                if (checkBox3.Checked && mojeUprawnienia.Update.ToString() == "True")
                 {
-                    if (checkBox7.Checked && connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
+                    if (checkBox7.Checked && mojeUprawnienia.UpdateIsGrantable.ToString() == "True")
                         giveGrantable = true;
                     else
                         giveGrantable = false;
                     grant("UPDATE", giveGrantable);
                 }
-                if (checkBox4.Checked && connection.myPrivileges.Select.ToString() == "True")
+                if (checkBox4.Checked && mojeUprawnienia.Select.ToString() == "True")
                 {
-                    if (checkBox8.Checked && connection.myPrivileges.SelectIsGrantable.ToString() == "True")
+                    if (checkBox8.Checked && mojeUprawnienia.SelectIsGrantable.ToString() == "True")
                         giveGrantable = true;
                     else
                         giveGrantable = false;
                     grant("SELECT", giveGrantable);
                 }
-                if (checkBox9.Checked && connection.myPrivileges.TakeOver.ToString() == "True")
+                if (checkBox9.Checked && mojeUprawnienia.TakeOver.ToString() == "True")
                 {
-                    if (checkBox10.Checked && connection.myPrivileges.TakeOverIsGrantable.ToString() == "True")
+                    if (checkBox10.Checked && mojeUprawnienia.TakeOverIsGrantable.ToString() == "True")
                     {
                         giveGrantable = true;
                     }
@@ -446,8 +449,10 @@ namespace WindowsFormsApplication1
         private void disableChceckboxes()
         {
             DataGridViewRow row = dataGridView2.CurrentRow;
-            if (connection.myPrivileges.Insert.ToString() == "True" &&
-                row.Cells[3].Value.ToString() == "False" && connection.myPrivileges.InsertIsGrantable.ToString() == "True")
+            var mojeUprawnienia = connection.ListGrantee.Find(x => (x.UserName == connection.Login) && (x.TableName == chosenTable));
+
+            if (mojeUprawnienia.Insert.ToString() == "True" &&
+                row.Cells[3].Value.ToString() == "False" && mojeUprawnienia.InsertIsGrantable.ToString() == "True")
             {
                 checkBox1.Enabled = true;
                 checkBox5.Enabled = true;
@@ -457,8 +462,8 @@ namespace WindowsFormsApplication1
                 checkBox1.Enabled = false;
                 checkBox5.Enabled = false;
             }
-            if (connection.myPrivileges.Delete.ToString() == "True" &&
-                row.Cells[5].Value.ToString() == "False" && connection.myPrivileges.DeleteIsGrantable.ToString() == "True")
+            if (mojeUprawnienia.Delete.ToString() == "True" &&
+                row.Cells[5].Value.ToString() == "False" && mojeUprawnienia.DeleteIsGrantable.ToString() == "True")
             {
                 checkBox2.Enabled = true;
                 checkBox6.Enabled = true;
@@ -468,8 +473,8 @@ namespace WindowsFormsApplication1
                 checkBox2.Enabled = false;
                 checkBox6.Enabled = false;
             }
-            if (connection.myPrivileges.Update.ToString() == "True" &&
-                row.Cells[7].Value.ToString() == "False" && connection.myPrivileges.UpdateIsGrantable.ToString() == "True")
+            if (mojeUprawnienia.Update.ToString() == "True" &&
+                row.Cells[7].Value.ToString() == "False" && mojeUprawnienia.UpdateIsGrantable.ToString() == "True")
             {
                 checkBox3.Enabled = true;
                 checkBox7.Enabled = true;
@@ -479,8 +484,8 @@ namespace WindowsFormsApplication1
                 checkBox3.Enabled = false;
                 checkBox7.Enabled = false;
             }
-            if (connection.myPrivileges.Select.ToString() == "True" &&
-                row.Cells[1].Value.ToString() == "False" && connection.myPrivileges.SelectIsGrantable.ToString() == "True")
+            if (mojeUprawnienia.Select.ToString() == "True" &&
+                row.Cells[1].Value.ToString() == "False" && mojeUprawnienia.SelectIsGrantable.ToString() == "True")
             {
                 checkBox4.Enabled = true;
                 checkBox8.Enabled = true;
@@ -490,8 +495,8 @@ namespace WindowsFormsApplication1
                 checkBox4.Enabled = false;
                 checkBox8.Enabled = false;
             }
-            if (connection.myPrivileges.TakeOver.ToString() == "True" &&
-                row.Cells[9].Value.ToString() == "False" && connection.myPrivileges.TakeOverIsGrantable.ToString() == "True")
+            if (mojeUprawnienia.TakeOver.ToString() == "True" &&
+                row.Cells[9].Value.ToString() == "False" && mojeUprawnienia.TakeOverIsGrantable.ToString() == "True")
             {
                 checkBox9.Enabled = true;
                 checkBox10.Enabled = true;

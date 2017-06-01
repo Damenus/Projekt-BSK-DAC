@@ -44,6 +44,7 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.TableID = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -51,7 +52,6 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.dataGridView3 = new System.Windows.Forms.DataGridView();
             this.User = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Login = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -70,7 +70,7 @@
             // checkBox10
             // 
             this.checkBox10.AutoSize = true;
-            this.checkBox10.Location = new System.Drawing.Point(482, 360);
+            this.checkBox10.Location = new System.Drawing.Point(482, 356);
             this.checkBox10.Name = "checkBox10";
             this.checkBox10.Size = new System.Drawing.Size(134, 17);
             this.checkBox10.TabIndex = 41;
@@ -80,7 +80,7 @@
             // checkBox9
             // 
             this.checkBox9.AutoSize = true;
-            this.checkBox9.Location = new System.Drawing.Point(409, 360);
+            this.checkBox9.Location = new System.Drawing.Point(406, 356);
             this.checkBox9.Name = "checkBox9";
             this.checkBox9.Size = new System.Drawing.Size(61, 17);
             this.checkBox9.TabIndex = 40;
@@ -107,7 +107,7 @@
             // checkBox8
             // 
             this.checkBox8.AutoSize = true;
-            this.checkBox8.Location = new System.Drawing.Point(482, 268);
+            this.checkBox8.Location = new System.Drawing.Point(482, 264);
             this.checkBox8.Name = "checkBox8";
             this.checkBox8.Size = new System.Drawing.Size(134, 17);
             this.checkBox8.TabIndex = 38;
@@ -117,7 +117,7 @@
             // checkBox7
             // 
             this.checkBox7.AutoSize = true;
-            this.checkBox7.Location = new System.Drawing.Point(482, 337);
+            this.checkBox7.Location = new System.Drawing.Point(482, 287);
             this.checkBox7.Name = "checkBox7";
             this.checkBox7.Size = new System.Drawing.Size(134, 17);
             this.checkBox7.TabIndex = 37;
@@ -127,7 +127,7 @@
             // checkBox6
             // 
             this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(482, 314);
+            this.checkBox6.Location = new System.Drawing.Point(482, 333);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(134, 17);
             this.checkBox6.TabIndex = 36;
@@ -137,7 +137,7 @@
             // checkBox5
             // 
             this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(482, 291);
+            this.checkBox5.Location = new System.Drawing.Point(482, 310);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(134, 17);
             this.checkBox5.TabIndex = 35;
@@ -146,7 +146,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(410, 398);
+            this.button1.Location = new System.Drawing.Point(406, 396);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(144, 23);
             this.button1.TabIndex = 34;
@@ -157,7 +157,7 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(409, 268);
+            this.checkBox4.Location = new System.Drawing.Point(406, 264);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(67, 17);
             this.checkBox4.TabIndex = 33;
@@ -167,7 +167,7 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(410, 337);
+            this.checkBox3.Location = new System.Drawing.Point(406, 287);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(70, 17);
             this.checkBox3.TabIndex = 32;
@@ -177,7 +177,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(410, 314);
+            this.checkBox2.Location = new System.Drawing.Point(406, 333);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(68, 17);
             this.checkBox2.TabIndex = 31;
@@ -187,7 +187,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(410, 291);
+            this.checkBox1.Location = new System.Drawing.Point(406, 310);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(66, 17);
             this.checkBox1.TabIndex = 30;
@@ -197,7 +197,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(407, 245);
+            this.label5.Location = new System.Drawing.Point(403, 245);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(104, 13);
             this.label5.TabIndex = 29;
@@ -211,8 +211,15 @@
             this.dataGridView2.Location = new System.Drawing.Point(12, 32);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.Size = new System.Drawing.Size(1057, 163);
+            this.dataGridView2.Size = new System.Drawing.Size(1057, 177);
             this.dataGridView2.TabIndex = 28;
+            // 
+            // Login
+            // 
+            this.Login.HeaderText = "Login";
+            this.Login.Name = "Login";
+            this.Login.ReadOnly = true;
+            this.Login.Width = 90;
             // 
             // label2
             // 
@@ -280,13 +287,6 @@
             this.User.HeaderText = "User";
             this.User.Name = "User";
             this.User.ReadOnly = true;
-            // 
-            // Login
-            // 
-            this.Login.HeaderText = "Login";
-            this.Login.Name = "Login";
-            this.Login.ReadOnly = true;
-            this.Login.Width = 90;
             // 
             // MainForm
             // 

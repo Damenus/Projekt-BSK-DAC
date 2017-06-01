@@ -95,7 +95,6 @@ namespace WindowsFormsApplication1
                 }
         }
 
-        //łączenie z bazą danych
         public void Connect()
         {           
             if (connection == null)
@@ -121,7 +120,6 @@ namespace WindowsFormsApplication1
             connection.Close();
         }
 
-        //pobranie listy tabel z bazydanych
         public List<String> GetTablesName()
         {
             List<String> list = new List<string>();
@@ -148,7 +146,6 @@ namespace WindowsFormsApplication1
             return list;
         }
 
-        //pobranie listy użytoników z bazydanych
         public List<String> GetUsers()
         {
             List<String> list = new List<string>();
@@ -278,11 +275,7 @@ namespace WindowsFormsApplication1
                 }
             }
 
-            string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
-            MySqlConnection myConnection = new MySqlConnection(connectionString);
-            myConnection.Open();
-
-            MySqlCommand cmd = myConnection.CreateCommand();
+            MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE, RECEIVED_FROM, TABLE_NAME FROM uprawnienia.user_privileges;");
 
             MySqlDataReader myReader = cmd.ExecuteReader();
@@ -305,10 +298,6 @@ namespace WindowsFormsApplication1
                 }
             }
             myReader.Close();
-
-            myConnection.Close();
-
-            //ListGrantee = list;
 
             return list;
         }
@@ -359,9 +348,6 @@ namespace WindowsFormsApplication1
 
             else if (a.TakeOver != b.TakeOver) result = false;
             else if (a.TakeOverIsGrantable != b.TakeOverIsGrantable) result = false;
-
-          //  else if (a.TableName != b.TableName) result = false;
-          //  else if (a.UserName != b.UserName) result = false;
 
             return result;
         }
