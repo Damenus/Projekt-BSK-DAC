@@ -380,8 +380,8 @@ namespace WindowsFormsApplication1
             {
                 var mojLogin = connection.Login;
                 var uprawnieniaPrzekazywanemu = connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable));
-                if (uprawnieniaPrzekazywanemu.TakeOver)
-                {
+                if (uprawnieniaPrzekazywanemu.TakeOver)//podwarunkiem że nie jest wnuczkiem!!! checkIfParent(mojLogin, chosenUser);
+                {    
                     takeOver(); //usuwanie uprawnien przejmującego
                     giveAllPrivileges(); //oddanie uprawnień 
                     return;
@@ -626,6 +626,7 @@ namespace WindowsFormsApplication1
             }
 
             var uprawnieniaZaznaczonego = connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable));
+            var uprawnieniaRoota = connection.ListGrantee.Find(x => (x.UserName == "root") && (x.TableName == chosenTable));
             var mojLogin = connection.Login;
 
             String userPrivileges = dataGridView2.Rows[rowIndex].Cells[columnIndex].Value.ToString();
@@ -644,14 +645,14 @@ namespace WindowsFormsApplication1
                     checkBox8.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (userPrivileges[0] == 's' && (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
+                if (userPrivileges[0] == 's' && (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.Select)))
                 {
                     checkBox4.Enabled = true;
                     checkBox4.Checked = true;
 
                     checkBox8.Enabled = true;
                 }
-                else if (userPrivileges[0] == 'S' && (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
+                else if (userPrivileges[0] == 'S' && (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.SelectIsGrantable)))
                 {
                     checkBox4.Enabled = true;
                     checkBox4.Checked = true;
@@ -671,14 +672,14 @@ namespace WindowsFormsApplication1
                     checkBox7.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (userPrivileges[1] == 'u' && (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
+                if (userPrivileges[1] == 'u' && (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.Update)))
                 {
                     checkBox3.Enabled = true;
                     checkBox3.Checked = true;
 
                     checkBox7.Enabled = true;
                 }
-                else if (userPrivileges[1] == 'U' && (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
+                else if (userPrivileges[1] == 'U' && (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.UpdateIsGrantable)))
                 {
                     checkBox3.Enabled = true;
                     checkBox3.Checked = true;
@@ -698,14 +699,14 @@ namespace WindowsFormsApplication1
                     checkBox5.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (userPrivileges[2] == 'i' && (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
+                if (userPrivileges[2] == 'i' && (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.Insert)))
                 {
                     checkBox1.Enabled = true;
                     checkBox1.Checked = true;
 
                     checkBox5.Enabled = true;
                 }
-                else if (userPrivileges[2] == 'I' && (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
+                else if (userPrivileges[2] == 'I' && (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.InsertIsGrantable)))
                 {
                     checkBox1.Enabled = true;
                     checkBox1.Checked = true;
@@ -725,14 +726,14 @@ namespace WindowsFormsApplication1
                     checkBox6.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (userPrivileges[3] == 'd' && (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
+                if (userPrivileges[3] == 'd' && (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.Delete)))
                 {
                     checkBox2.Enabled = true;
                     checkBox2.Checked = true;
 
                     checkBox6.Enabled = true;
                 }
-                else if (userPrivileges[3] == 'D' && (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
+                else if (userPrivileges[3] == 'D' && (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin || (mojLogin == "root" && uprawnieniaRoota.DeleteIsGrantable)))
                 {
                     checkBox2.Enabled = true;
                     checkBox2.Checked = true;
@@ -875,6 +876,19 @@ namespace WindowsFormsApplication1
                 chosenUser = dataGridView3.Rows[e.RowIndex].Cells["User"].Value.ToString();
             }
             disableCheckboxes();
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //uncheck();
+
+            //if (e.RowIndex >= 0)
+            //{
+            //    disableCheckboxes();
+            //    chosenUser = dataGridView2.Rows[e.RowIndex].Cells["Login"].Value.ToString();
+            //    chosenTable = dataGridView2.Columns[e.ColumnIndex].Name.ToString();
+            //}
+            //disableCheckboxes();
         }
     }
 }
