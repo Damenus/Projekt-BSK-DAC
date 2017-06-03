@@ -29,8 +29,8 @@ namespace WindowsFormsApplication1
             Login = login;
             Password = password;
         }
-        
-        public string Server { get; set;  }
+
+        public string Server { get; set; }
         public string Port { get; set; }
         public string DatabaseName { get; set; }
         public string Password { get; set; }
@@ -42,7 +42,7 @@ namespace WindowsFormsApplication1
         public Grantee myPrivileges;
         public List<String> ListTabels { get; set; }
         public List<String> ListUsers { get; set; }
-        public List<Grantee> ListGrantee { get; set; }      
+        public List<Grantee> ListGrantee { get; set; }
 
         void readConfiguration()
         {
@@ -68,40 +68,40 @@ namespace WindowsFormsApplication1
             line.Trim();
             var options = line.Split(';');
 
-            foreach(var opt in options)
+            foreach (var opt in options)
             {
-                setConfiguration(opt);              
+                setConfiguration(opt);
             }
         }
 
         void setConfiguration(String opt)
         {
-              var value = opt.Split('=');
+            var value = opt.Split('=');
 
-                switch (value[0])
-                {
-                    case "Server":
-                        this.Server = value[1];
-                        break;
-                    case "Port":
-                        this.Port = value[1];
-                        break;
-                    case "SSL":
-                        this.SSL = (Int16.Parse(value[1]) == 1)? true : false;
-                        break;
-                    default:
-                        Console.WriteLine("The attribute not allowed: " + value[0]);
-                        break;
-                }
+            switch (value[0])
+            {
+                case "Server":
+                    this.Server = value[1];
+                    break;
+                case "Port":
+                    this.Port = value[1];
+                    break;
+                case "SSL":
+                    this.SSL = (Int16.Parse(value[1]) == 1) ? true : false;
+                    break;
+                default:
+                    Console.WriteLine("The attribute not allowed: " + value[0]);
+                    break;
+            }
         }
 
         public void Connect()
-        {           
+        {
             if (connection == null)
             {
                 string connetionString;
 
-                if(SSL == true) //Z SSL
+                if (SSL == true) //Z SSL
                     connetionString = string.Format("Server={0}; Port={1}; database={2}; user={3}; password={4}; CertificateFile=client.pfx; CertificatePassword=pass; SSL Mode=Required; ", Server, Port, DatabaseName, Login, Password);
                 else //Bez SSL
                     connetionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
@@ -112,11 +112,11 @@ namespace WindowsFormsApplication1
                 this.ListTabels = GetTablesName();
                 this.ListUsers = GetUsers();
                 this.ListGrantee = GetTablePrivilegesAllUsersAllTabel();
-            } 
+            }
         }
 
         public void Close()
-        {            
+        {
             connection.Close();
         }
 
@@ -174,41 +174,65 @@ namespace WindowsFormsApplication1
 
         //będę pobierał wszystkie dane o uprawnieniach i wrzucał w obiekty
         //SELECT * from information_schema.TABLE_PRIVILEGES
-    //    public List<Grantee> GetTablePrivileges(String tableName)
-    //    {
-    //        List<Grantee> list = new List<Grantee>();
+        //    public List<Grantee> GetTablePrivileges(String tableName)
+        //    {
+        //        List<Grantee> list = new List<Grantee>();
 
-    ////        if (this.IsConnect() == true)
-    // //       {
-    //            MySqlCommand cmd = connection.CreateCommand();
+        ////        if (this.IsConnect() == true)
+        // //       {
+        //            MySqlCommand cmd = connection.CreateCommand();
 
-    //            cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
+        //            cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE FROM uprawnienia.user_privileges;");
 
-    //            MySqlDataReader myReader = cmd.ExecuteReader();
-    //            while (myReader.Read())
-    //            {
-    //                String userName = myReader.GetString(0);
-    //                String privilegeType = myReader.GetString(1);
-    //                String isGrantable = myReader.GetString(2);
+        //            MySqlDataReader myReader = cmd.ExecuteReader();
+        //            while (myReader.Read())
+        //            {
+        //                String userName = myReader.GetString(0);
+        //                String privilegeType = myReader.GetString(1);
+        //                String isGrantable = myReader.GetString(2);
 
-    //                //czy istnieje już taki
-    //                if (list.Exists(x => x.UserName == userName))
-    //                {
-    //                    list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable);
-    //                }
-    //                else //utworz jak nie istnieje
-    //                {
-    //                    list.Add(new Grantee(userName, privilegeType, isGrantable));
-    //                }
-    //            }
+        //                //czy istnieje już taki
+        //                if (list.Exists(x => x.UserName == userName))
+        //                {
+        //                    list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable);
+        //                }
+        //                else //utworz jak nie istnieje
+        //                {
+        //                    list.Add(new Grantee(userName, privilegeType, isGrantable));
+        //                }
+        //            }
 
-    //            myReader.Close();
+        //            myReader.Close();
 
-    ////        }
+        ////        }
 
-    //        return list;
-    //    }
+        //        return list;
+        //    }
+        public Grantee getUserPrivileges(String tableName, String userName)
+        {
+            userName = "'" + userName + "'@'%'";
+            Grantee user = new Grantee(userName);
 
+            string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+            MySqlConnection myConnection = new MySqlConnection(connectionString);
+            myConnection.Open();
+            MySqlCommand cmd = myConnection.CreateCommand();
+
+            cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE, RECEIVED_FROM FROM uprawnienia.user_privileges WHERE GRANTEE = \"{0}\" AND TABLE_NAME = '{1}';", userName, tableName);
+            MySqlDataReader myReader = cmd.ExecuteReader();
+            while (myReader.Read())
+            {
+                String privilegeType = myReader.GetString(1);
+                String isGrantable = myReader.GetString(2);
+                String table = tableName;//myReader.GetString(1);
+                String from = myReader.GetString(3);
+                user.SetPrivileges(privilegeType, isGrantable, from);
+            }
+
+            myReader.Close();
+            myConnection.Close();
+            return user;
+        }
         public List<Grantee> GetTablePrivilegesAllUsers(String tableName)
         {
             List<Grantee> list = new List<Grantee>();
@@ -218,60 +242,60 @@ namespace WindowsFormsApplication1
                 list.Add(new Grantee(user));
             }
 
-       //     if (this.IsConnect() == true)
-        //    {
+            //     if (this.IsConnect() == true)
+            //    {
 
-                string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
-                MySqlConnection myConnection = new MySqlConnection(connectionString);
-                myConnection.Open();
-                MySqlCommand cmd = myConnection.CreateCommand();
+            string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", Server, Port, DatabaseName, Login, Password);
+            MySqlConnection myConnection = new MySqlConnection(connectionString);
+            myConnection.Open();
+            MySqlCommand cmd = myConnection.CreateCommand();
 
-                cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE, RECEIVED_FROM FROM uprawnienia.user_privileges WHERE TABLE_NAME = '{0}';", tableName);
+            cmd.CommandText = string.Format("SELECT GRANTEE, PRIVILEGE_TYPE, IS_GRANTABLE, RECEIVED_FROM FROM uprawnienia.user_privileges WHERE TABLE_NAME = '{0}';", tableName);
 
-                //  try
-                //    {
-                MySqlDataReader myReader = cmd.ExecuteReader();
-                while (myReader.Read())
+            //  try
+            //    {
+            MySqlDataReader myReader = cmd.ExecuteReader();
+            while (myReader.Read())
+            {
+                String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
+                String privilegeType = myReader.GetString(1);
+                String isGrantable = myReader.GetString(2);
+                String table = tableName;//myReader.GetString(1);
+                String from = myReader.GetString(3);
+
+                //czy istnieje już taki
+                if (list.Exists(x => x.UserName == userName))
                 {
-                    String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
-                    String privilegeType = myReader.GetString(1);
-                    String isGrantable = myReader.GetString(2);
-                    String table = tableName;//myReader.GetString(1);
-                    String from = myReader.GetString(3);
-
-                    //czy istnieje już taki
-                    if (list.Exists(x => x.UserName == userName))
-                    {
-                        list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable, from);
-                    }
-                    else //utworz jak nie istnieje
-                    {
-                        list.Add(new Grantee(userName, privilegeType, isGrantable, from));
-                    }
+                    list.Find(x => x.UserName == userName).SetPrivileges(privilegeType, isGrantable, from);
+                }
+                else //utworz jak nie istnieje
+                {
+                    list.Add(new Grantee(userName, privilegeType, isGrantable, from));
+                }
             }
 
-                myReader.Close();
-                //}
-                //catch(Exception e)
-                //{
+            myReader.Close();
+            //}
+            //catch(Exception e)
+            //{
 
-                //}
-                myConnection.Close();
+            //}
+            myConnection.Close();
 
-            
+
 
             return list;
         }
 
         public List<Grantee> GetTablePrivilegesAllUsersAllTabel()
         {
-            List<Grantee> list = new List<Grantee>();            
+            List<Grantee> list = new List<Grantee>();
 
             foreach (var user in ListUsers)
             {
                 foreach (var table in ListTabels)
                 {
-                    list.Add(new Grantee(user,table));
+                    list.Add(new Grantee(user, table));
                 }
             }
 
@@ -309,10 +333,10 @@ namespace WindowsFormsApplication1
             if (ListTabels == null)
                 result = true;
             else
-            if (list.Count() != ListTabels.Count())
-                result = true;
-  
-                return result;
+                if (list.Count() != ListTabels.Count())
+                    result = true;
+
+            return result;
 
         }
 
@@ -321,8 +345,10 @@ namespace WindowsFormsApplication1
             bool result = false;
 
             if (ListGrantee != null)
-                foreach(var elementNew in list) {    
-                    foreach(var elementOld in ListGrantee ) {
+                foreach (var elementNew in list)
+                {
+                    foreach (var elementOld in ListGrantee)
+                    {
                         if (elementNew.UserName == elementOld.UserName && elementNew.TableName == elementOld.TableName)
                             if (!isGranteeElementsTheSame(elementNew, elementOld))
                                 result = true;
@@ -351,7 +377,7 @@ namespace WindowsFormsApplication1
 
             return result;
         }
-          
+
 
     }
 }

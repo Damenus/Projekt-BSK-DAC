@@ -25,14 +25,14 @@ namespace WindowsFormsApplication1
         public MainForm()
         {
             InitializeComponent();
-        
+
             LoginForm form = new LoginForm();
             form.ShowDialog();
             connection = form.connection;
 
             if (connection != null)
             {
-                
+
                 toolStripStatusLabel1.Text = "Jesteś zalogowany jako " + connection.Login;
                 prepareDataGridView2();
 
@@ -41,6 +41,7 @@ namespace WindowsFormsApplication1
                 refreshPreviligeTabele(connection.GetTablePrivilegesAllUsersAllTabel());
 
                 task = Task.Run(() => chceckIfChange());
+                dataGridView2.AllowUserToAddRows = false;
             }
         }
 
@@ -50,11 +51,11 @@ namespace WindowsFormsApplication1
 
 
             var tables = connection.ListTabels;
-            kolumny = new ArrayList ();
+            kolumny = new ArrayList();
 
             foreach (var nameTable in tables)
             {
-               
+
                 var newTable = new System.Windows.Forms.DataGridViewTextBoxColumn();
                 kolumny.Add(newTable);
 
@@ -63,7 +64,7 @@ namespace WindowsFormsApplication1
                 newTable.ReadOnly = true;
                 newTable.Width = 120;
 
-                this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {newTable});
+                this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { newTable });
             }
             // 
             // TakeOverIsGrantable
@@ -77,7 +78,7 @@ namespace WindowsFormsApplication1
             dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { TakeOverIsGrantable });
 
         }
-       
+
         public delegate void TableDelegate(List<String> myControl);
         public delegate void UserDelegate(List<String> myControl);
         public delegate void PreviligeDelegate(List<Grantee> myControl);
@@ -110,12 +111,22 @@ namespace WindowsFormsApplication1
                         }
                     }
                 }
+                try
+                {
+                    int columnIndex = dataGridView2.Columns[g.TableName].Index;
+                    dataGridView2.Rows[rowID].Cells[columnIndex].Value = g.wyswietlUprawnienia();
+                }
+                catch
+                {
 
-                int columnIndex = dataGridView2.Columns[g.TableName].Index;
-                dataGridView2.Rows[rowID].Cells[columnIndex].Value = g.wyswietlUprawnienia();
+                }
 
-                if(g.TakeOver && !g.TakeOverIsGrantable)
+                if (g.TakeOver && g.TakeOverIsGrantable)
                     dataGridView2.Rows[rowID].Cells[connection.ListTabels.Count + 1].Value = "Przejmij";
+                else
+                {
+                    dataGridView2.Rows[rowID].Cells[connection.ListTabels.Count + 1].Value = "-";
+                }
             }
         }
 
@@ -147,7 +158,7 @@ namespace WindowsFormsApplication1
             var rem = 0;
 
             if (dataGridView3.SelectedCells.Count != 0)
-            {        
+            {
                 rem = dataGridView3.CurrentCell.RowIndex;
                 dataGridView3.Rows[rem].Selected = false;
             }
@@ -230,7 +241,7 @@ namespace WindowsFormsApplication1
                 Thread.Sleep(3000);
             }
         }
-       
+
         //nadawanie uprawnień
         private void grant(string privilage, bool grantable)
         {
@@ -266,7 +277,7 @@ namespace WindowsFormsApplication1
                 cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'NO', '{3}');", granteeName, tableName, privilage, connection.Login);
             else
                 cmd.CommandText = string.Format("INSERT INTO uprawnienia.user_privileges VALUES(\"{0}\", '{1}', '{2}', 'YES', '{3}');", granteeName, tableName, privilage, connection.Login);
-            
+
             cmd.ExecuteReader();
             myConnection.Close();
         }
@@ -283,7 +294,7 @@ namespace WindowsFormsApplication1
             cmd.CommandText = string.Format("UPDATE uprawnienia.user_privileges SET `GRANTEE`=\"{0}\" WHERE GRANTEE=\"{1}\" AND IS_GRANTABLE='YES';", userName, myUserName);
             cmd.ExecuteReader();
             myConnection.Close();
-            myConnection.Open();         
+            myConnection.Open();
             cmd.CommandText = string.Format("DELETE FROM uprawnienia.user_privileges WHERE GRANTEE=\"{0}\" AND PRIVILEGE_TYPE='TAKEOVER';", userName);
             cmd.ExecuteReader();
             myConnection.Close();
@@ -297,6 +308,32 @@ namespace WindowsFormsApplication1
                 takeBackPrivilege(connection.Login, "TAKEOVER", tableName);
             }
         }
+        private bool checkIfParent(string currentUser, string wantedUser) //sprawdź, czy zaznaczony użytkownik jest przodkiem; zwraca true, kiedy znaleziono przodka
+        {
+            bool isParent = false;
+            Grantee userPrivileges;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                userPrivileges = connection.getUserPrivileges(row.Cells[0].Value.ToString(), currentUser);
+                if (userPrivileges.fromWho.Any(u => (u.Value == wantedUser)))//szukanie bezpośredniego przodka
+                {
+                    return true;
+                }
+                else //szukanie dalszego przodka
+                {
+                    foreach (var p in userPrivileges.fromWho)
+                    {
+                        if (p.Value != "none")
+                            isParent = checkIfParent(p.Value, wantedUser);
+                        if (isParent)
+                        {
+                            return isParent;
+                        }
+                    }
+                }
+            }
+            return isParent;
+        }
 
         private void takeOver()
         {
@@ -305,7 +342,7 @@ namespace WindowsFormsApplication1
             foreach (var tableName in connection.ListTabels)
             {
                 Grantee user = connection.ListGrantee.Find(x => (x.UserName == userName) && (x.TableName == tableName)); ; //szukamy uzytkownika, któremu usuwamy uprawnienia
-                
+
                 if (user.Select)
                 {
                     takeBackPrivilege(user.UserName, "SELECT", tableName);
@@ -514,7 +551,80 @@ namespace WindowsFormsApplication1
             uncheck();
         }
         //kliknięcie wybranej tabeli, powoduje pojwenie się uprawnień użytkowników
-  
+        private void disableCheckboxes()
+        {
+            connection.myPrivileges = connection.getUserPrivileges(dataGridView1.CurrentRow.Cells[0].Value.ToString(), connection.Login);
+            String tableName = dataGridView1.CurrentRow.Cells[0].Value.ToString(), userName = dataGridView3.CurrentRow.Cells[0].Value.ToString();
+            int columnIndex = dataGridView2.Columns[tableName].Index;
+            int takeOverColumn = dataGridView2.Columns["Przejmij"].Index;
+
+            String searchValue = userName;
+            int rowIndex = -1;
+            foreach (DataGridViewRow row in dataGridView2.Rows)
+            {
+                if (row.Cells[0].Value.ToString().Equals(searchValue))
+                {
+                    rowIndex = row.Index;
+                    break;
+                }
+            }
+            String userPrivileges = dataGridView2.Rows[rowIndex].Cells[columnIndex].Value.ToString();
+            if (userName == connection.Login || checkIfParent(connection.Login, userName))
+                disableAllCheckboxes();
+            else
+            {
+                if (connection.myPrivileges.SelectIsGrantable && userPrivileges[0] == '-')
+                {
+                    checkBox4.Enabled = true;
+                    checkBox8.Enabled = true;
+                }
+                else
+                {
+                    checkBox4.Enabled = false;
+                    checkBox8.Enabled = false;
+                }
+                if (connection.myPrivileges.UpdateIsGrantable && userPrivileges[1] == '-')
+                {
+                    checkBox3.Enabled = true;
+                    checkBox7.Enabled = true;
+                }
+                else
+                {
+                    checkBox3.Enabled = false;
+                    checkBox7.Enabled = false;
+                }
+                if (connection.myPrivileges.InsertIsGrantable && userPrivileges[2] == '-')
+                {
+                    checkBox1.Enabled = true;
+                    checkBox5.Enabled = true;
+                }
+                else
+                {
+                    checkBox1.Enabled = false;
+                    checkBox5.Enabled = false;
+                }
+                if (connection.myPrivileges.DeleteIsGrantable && userPrivileges[3] == '-')
+                {
+                    checkBox2.Enabled = true;
+                    checkBox6.Enabled = true;
+                }
+                else
+                {
+                    checkBox2.Enabled = false;
+                    checkBox6.Enabled = false;
+                }
+                if (dataGridView2.Rows[rowIndex].Cells[takeOverColumn].Value.ToString() == "-" && connection.myPrivileges.TakeOverIsGrantable)
+                {
+                    checkBox9.Enabled = true;
+                    checkBox10.Enabled = true;
+                }
+                else
+                {
+                    checkBox9.Enabled = false;
+                    checkBox10.Enabled = false;
+                }
+            }
+        }
         private void takeBackPrivilege(string userName, string privilege, string tableName)//kto traci, co traci, gdzie traci
         {
             string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
@@ -612,22 +722,26 @@ namespace WindowsFormsApplication1
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-          //  disableAllCheckboxes();
+
+            //  disableAllCheckboxes();
             uncheck();
 
             if (e.RowIndex >= 0)
             {
+                disableCheckboxes();
                 chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
             }
         }
 
         private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-         //   disableAllCheckboxes();
+
+            //   disableAllCheckboxes();
             uncheck();
 
             if (e.RowIndex >= 0)
             {
+                disableCheckboxes();
                 chosenUser = dataGridView3.Rows[e.RowIndex].Cells["User"].Value.ToString();
             }
         }
