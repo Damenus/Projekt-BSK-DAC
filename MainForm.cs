@@ -433,21 +433,43 @@ namespace WindowsFormsApplication1
                     grant("TAKEOVER", giveGrantable);
                 }
                 //Zmiana Damiana-----------------------------------
-                if (!checkBox4.Checked && uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin)
+                //zabranie praw
+                if (!checkBox4.Checked && (uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
                 {
                     takeBackPrivilege(chosenUser, "SELECT", chosenTable);
                 }
-                if (!checkBox3.Checked && uprawnieniaPrzekazywanemu.fromWho["UPDATE"] == mojLogin)
+                if (!checkBox3.Checked && (uprawnieniaPrzekazywanemu.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
                 {
                     takeBackPrivilege(chosenUser, "UPDATE", chosenTable);
                 }
-                if (!checkBox1.Checked && uprawnieniaPrzekazywanemu.fromWho["INSERT"] == mojLogin)
+                if (!checkBox1.Checked && (uprawnieniaPrzekazywanemu.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
                 {
                     takeBackPrivilege(chosenUser, "INSERT", chosenTable);
                 }
-                if (!checkBox2.Checked && uprawnieniaPrzekazywanemu.fromWho["DELETE"] == mojLogin)
+                if (!checkBox2.Checked && (uprawnieniaPrzekazywanemu.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
                 {
                     takeBackPrivilege(chosenUser, "DELETE", chosenTable);
+                }
+                //zabranie grantable
+                if (!checkBox8.Checked && ((uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin && uprawnieniaPrzekazywanemu.SelectIsGrantable) || ("root" == mojLogin && uprawnieniaPrzekazywanemu.SelectIsGrantable)))
+                {
+                    takeBackPrivilege(chosenUser, "SELECT", chosenTable);
+                    grant("SELECT", false);
+                }
+                if (!checkBox7.Checked && ((uprawnieniaPrzekazywanemu.fromWho["UPDATE"] == mojLogin && uprawnieniaPrzekazywanemu.UpdateIsGrantable) || ("root" == mojLogin && uprawnieniaPrzekazywanemu.UpdateIsGrantable)))
+                {
+                    takeBackPrivilege(chosenUser, "UPDATE", chosenTable);
+                    grant("UPDATE", false);
+                }
+                if (!checkBox5.Checked && ((uprawnieniaPrzekazywanemu.fromWho["INSERT"] == mojLogin && uprawnieniaPrzekazywanemu.InsertIsGrantable) || ("root" == mojLogin && uprawnieniaPrzekazywanemu.InsertIsGrantable)))
+                {
+                    takeBackPrivilege(chosenUser, "INSERT", chosenTable);
+                    grant("INSERT", false);
+                }
+                if (!checkBox6.Checked && ((uprawnieniaPrzekazywanemu.fromWho["DELETE"] == mojLogin && uprawnieniaPrzekazywanemu.DeleteIsGrantable) || ("root" == mojLogin && uprawnieniaPrzekazywanemu.DeleteIsGrantable)))
+                {
+                    takeBackPrivilege(chosenUser, "DELETE", chosenTable);
+                    grant("DELETE", false);
                 }
                 //----------------------------------------------
             }
@@ -616,14 +638,14 @@ namespace WindowsFormsApplication1
                     checkBox8.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin && userPrivileges[0] == 's')
+                if (userPrivileges[0] == 's' && (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox4.Enabled = true;
                     checkBox4.Checked = true;
 
                     checkBox8.Enabled = true;
                 }
-                else if (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin && userPrivileges[0] == 'S')
+                else if (userPrivileges[0] == 'S' && (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox4.Enabled = true;
                     checkBox4.Checked = true;
@@ -643,14 +665,14 @@ namespace WindowsFormsApplication1
                     checkBox7.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin && userPrivileges[1] == 'u')
+                if (userPrivileges[1] == 'u' && (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox3.Enabled = true;
                     checkBox3.Checked = true;
 
                     checkBox7.Enabled = true;
                 }
-                else if (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin && userPrivileges[1] == 'U')
+                else if (userPrivileges[1] == 'U' && (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox3.Enabled = true;
                     checkBox3.Checked = true;
@@ -670,14 +692,14 @@ namespace WindowsFormsApplication1
                     checkBox5.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin && userPrivileges[2] == 'i')
+                if (userPrivileges[2] == 'i' && (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox1.Enabled = true;
                     checkBox1.Checked = true;
 
                     checkBox5.Enabled = true;
                 }
-                else if (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin && userPrivileges[2] == 'I')
+                else if (userPrivileges[2] == 'I' && (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox1.Enabled = true;
                     checkBox1.Checked = true;
@@ -697,14 +719,14 @@ namespace WindowsFormsApplication1
                     checkBox6.Enabled = false;
                 }
                 //warunek od Damian na usuwanie--------------------
-                if (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin && userPrivileges[3] == 'd')
+                if (userPrivileges[3] == 'd' && (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox2.Enabled = true;
                     checkBox2.Checked = true;
 
                     checkBox6.Enabled = true;
                 }
-                else if (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin && userPrivileges[3] == 'D')
+                else if (userPrivileges[3] == 'D' && (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
                 {
                     checkBox2.Enabled = true;
                     checkBox2.Checked = true;
