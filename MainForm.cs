@@ -129,7 +129,7 @@ namespace WindowsFormsApplication1
 
                 }
 
-                if (g.TakeOver && g.TakeOverIsGrantable)
+                if (g.TakeOver && !g.TakeOverIsGrantable) //g.TakeOver && g.TakeOverIsGrantable
                     dataGridView2.Rows[rowID].Cells[connection.ListTabels.Count + 1].Value = "Przejmij";
                 else
                 {
@@ -604,7 +604,13 @@ namespace WindowsFormsApplication1
         {
                         
             connection.myPrivileges = connection.getUserPrivileges(dataGridView1.CurrentRow.Cells[0].Value.ToString(), connection.Login);
-            String tableName = dataGridView1.CurrentRow.Cells[0].Value.ToString(), userName = dataGridView3.CurrentRow.Cells[0].Value.ToString();
+
+            //String tableName = dataGridView1.CurrentRow.Cells[0].Value.ToString();
+            //String userName = dataGridView3.CurrentRow.Cells[0].Value.ToString();
+
+            String tableName = chosenTable;
+            String userName = chosenUser;
+
             int columnIndex = dataGridView2.Columns[tableName].Index;
             int takeOverColumn = dataGridView2.Columns["Przejmij"].Index;
 
@@ -854,6 +860,7 @@ namespace WindowsFormsApplication1
                 disableCheckboxes();
                 chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
             }
+            disableCheckboxes();
         }
 
         private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -867,6 +874,7 @@ namespace WindowsFormsApplication1
                 disableCheckboxes();
                 chosenUser = dataGridView3.Rows[e.RowIndex].Cells["User"].Value.ToString();
             }
+            disableCheckboxes();
         }
     }
 }
