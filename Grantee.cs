@@ -25,11 +25,16 @@ namespace WindowsFormsApplication1
             this.InsertIsGrantable = false;
             this.TakeOverIsGrantable = false;
 
+            setFromWhoAsNone();
+
         }
 
         public Grantee(String name, String table)
         {
             fromWho = new Dictionary<string, string>();
+
+
+
             this.UserName = name;
             this.TableName = table;
 
@@ -44,6 +49,8 @@ namespace WindowsFormsApplication1
             this.DeleteIsGrantable = false;
             this.InsertIsGrantable = false;
             this.TakeOverIsGrantable = false;
+
+            setFromWhoAsNone();
 
         }
 
@@ -63,6 +70,8 @@ namespace WindowsFormsApplication1
             this.DeleteIsGrantable = false;
             this.InsertIsGrantable = false;
             this.TakeOverIsGrantable = false;
+
+            setFromWhoAsNone();
 
 
             SetPrivileges(privilege, grantable, from);
@@ -87,6 +96,7 @@ namespace WindowsFormsApplication1
             this.InsertIsGrantable = false;
             this.TakeOverIsGrantable = false;
 
+            setFromWhoAsNone();
 
             SetPrivileges(privilege, grantable, from);
 
@@ -107,6 +117,14 @@ namespace WindowsFormsApplication1
         public bool InsertIsGrantable { get; set; }
         public bool TakeOverIsGrantable { get; set; }
         public Dictionary<string, string> fromWho;
+
+        private void setFromWhoAsNone()
+        {
+             fromWho.Add("SELECT", "none");
+             fromWho.Add("DELETE", "none");
+             fromWho.Add("INSERT", "none");
+             fromWho.Add("UPDATE", "none");
+        }
 
         public void SetPrivileges(String privileges, String grantable, String from)
         {

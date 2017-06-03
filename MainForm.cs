@@ -40,6 +40,14 @@ namespace WindowsFormsApplication1
                 userNameRefresh(connection.GetUsers());
                 refreshPreviligeTabele(connection.GetTablePrivilegesAllUsersAllTabel());
 
+                //dataGridView3.ClearSelection();
+                //dataGridView2.ClearSelection();
+                //dataGridView1.ClearSelection();
+                chosenTable = dataGridView1.Rows[1].Cells["TableID"].Value.ToString();
+                chosenUser = dataGridView3.Rows[1].Cells["User"].Value.ToString();
+
+                disableAllCheckboxes();
+
                 task = Task.Run(() => chceckIfChange());
                 dataGridView2.AllowUserToAddRows = false;
             }
@@ -370,6 +378,7 @@ namespace WindowsFormsApplication1
         {
             if (chosenTable != null && chosenUser != null)
             {
+                var mojLogin = connection.Login;
                 var uprawnieniaPrzekazywanemu = connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable));
                 if (uprawnieniaPrzekazywanemu.TakeOver)
                 {
@@ -423,6 +432,24 @@ namespace WindowsFormsApplication1
                         giveGrantable = false;
                     grant("TAKEOVER", giveGrantable);
                 }
+                //Zmiana Damiana-----------------------------------
+                if (!checkBox4.Checked && uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin)
+                {
+                    takeBackPrivilege(chosenUser, "SELECT", chosenTable);
+                }
+                if (!checkBox3.Checked && uprawnieniaPrzekazywanemu.fromWho["UPDATE"] == mojLogin)
+                {
+                    takeBackPrivilege(chosenUser, "UPDATE", chosenTable);
+                }
+                if (!checkBox1.Checked && uprawnieniaPrzekazywanemu.fromWho["INSERT"] == mojLogin)
+                {
+                    takeBackPrivilege(chosenUser, "INSERT", chosenTable);
+                }
+                if (!checkBox2.Checked && uprawnieniaPrzekazywanemu.fromWho["DELETE"] == mojLogin)
+                {
+                    takeBackPrivilege(chosenUser, "DELETE", chosenTable);
+                }
+                //----------------------------------------------
             }
             uncheck();
         }
@@ -488,71 +515,72 @@ namespace WindowsFormsApplication1
             checkBox9.Checked = false;
             checkBox10.Checked = false;
         }
-        private void disableChceckboxes()
-        {
-            DataGridViewRow row = dataGridView2.CurrentRow;
-            var mojeUprawnienia = connection.ListGrantee.Find(x => (x.UserName == connection.Login) && (x.TableName == chosenTable));
+        //private void disableChceckboxes()
+        //{
+        //    DataGridViewRow row = dataGridView2.CurrentRow;
+        //    var mojeUprawnienia = connection.ListGrantee.Find(x => (x.UserName == connection.Login) && (x.TableName == chosenTable));
 
-            if (mojeUprawnienia.Insert.ToString() == "True" &&
-                row.Cells[3].Value.ToString() == "False" && mojeUprawnienia.InsertIsGrantable.ToString() == "True")
-            {
-                checkBox1.Enabled = true;
-                checkBox5.Enabled = true;
-            }
-            else
-            {
-                checkBox1.Enabled = false;
-                checkBox5.Enabled = false;
-            }
-            if (mojeUprawnienia.Delete.ToString() == "True" &&
-                row.Cells[5].Value.ToString() == "False" && mojeUprawnienia.DeleteIsGrantable.ToString() == "True")
-            {
-                checkBox2.Enabled = true;
-                checkBox6.Enabled = true;
-            }
-            else
-            {
-                checkBox2.Enabled = false;
-                checkBox6.Enabled = false;
-            }
-            if (mojeUprawnienia.Update.ToString() == "True" &&
-                row.Cells[7].Value.ToString() == "False" && mojeUprawnienia.UpdateIsGrantable.ToString() == "True")
-            {
-                checkBox3.Enabled = true;
-                checkBox7.Enabled = true;
-            }
-            else
-            {
-                checkBox3.Enabled = false;
-                checkBox7.Enabled = false;
-            }
-            if (mojeUprawnienia.Select.ToString() == "True" &&
-                row.Cells[1].Value.ToString() == "False" && mojeUprawnienia.SelectIsGrantable.ToString() == "True")
-            {
-                checkBox4.Enabled = true;
-                checkBox8.Enabled = true;
-            }
-            else
-            {
-                checkBox4.Enabled = false;
-                checkBox8.Enabled = false;
-            }
-            if (mojeUprawnienia.TakeOver.ToString() == "True" &&
-                row.Cells[9].Value.ToString() == "False" && mojeUprawnienia.TakeOverIsGrantable.ToString() == "True")
-            {
-                checkBox9.Enabled = true;
-                checkBox10.Enabled = true;
-            }
-            else
-            {
-                checkBox9.Enabled = false;
-                checkBox10.Enabled = false;
-            }
-            uncheck();
-        }
+        //    if (mojeUprawnienia.Insert.ToString() == "True" &&
+        //        row.Cells[3].Value.ToString() == "False" && mojeUprawnienia.InsertIsGrantable.ToString() == "True")
+        //    {
+        //        checkBox1.Enabled = true;
+        //        checkBox5.Enabled = true;
+        //    }
+        //    else
+        //    {
+        //        checkBox1.Enabled = false;
+        //        checkBox5.Enabled = false;
+        //    }
+        //    if (mojeUprawnienia.Delete.ToString() == "True" &&
+        //        row.Cells[5].Value.ToString() == "False" && mojeUprawnienia.DeleteIsGrantable.ToString() == "True")
+        //    {
+        //        checkBox2.Enabled = true;
+        //        checkBox6.Enabled = true;
+        //    }
+        //    else
+        //    {
+        //        checkBox2.Enabled = false;
+        //        checkBox6.Enabled = false;
+        //    }
+        //    if (mojeUprawnienia.Update.ToString() == "True" &&
+        //        row.Cells[7].Value.ToString() == "False" && mojeUprawnienia.UpdateIsGrantable.ToString() == "True")
+        //    {
+        //        checkBox3.Enabled = true;
+        //        checkBox7.Enabled = true;
+        //    }
+        //    else
+        //    {
+        //        checkBox3.Enabled = false;
+        //        checkBox7.Enabled = false;
+        //    }
+        //    if (mojeUprawnienia.Select.ToString() == "True" &&
+        //        row.Cells[1].Value.ToString() == "False" && mojeUprawnienia.SelectIsGrantable.ToString() == "True")
+        //    {
+        //        checkBox4.Enabled = true;
+        //        checkBox8.Enabled = true;
+        //    }
+        //    else
+        //    {
+        //        checkBox4.Enabled = false;
+        //        checkBox8.Enabled = false;
+        //    }
+        //    if (mojeUprawnienia.TakeOver.ToString() == "True" &&
+        //        row.Cells[9].Value.ToString() == "False" && mojeUprawnienia.TakeOverIsGrantable.ToString() == "True")
+        //    {
+        //        checkBox9.Enabled = true;
+        //        checkBox10.Enabled = true;
+        //    }
+        //    else
+        //    {
+        //        checkBox9.Enabled = false;
+        //        checkBox10.Enabled = false;
+        //    }
+        //    uncheck();
+        //}
         //kliknięcie wybranej tabeli, powoduje pojwenie się uprawnień użytkowników
         private void disableCheckboxes()
         {
+                        
             connection.myPrivileges = connection.getUserPrivileges(dataGridView1.CurrentRow.Cells[0].Value.ToString(), connection.Login);
             String tableName = dataGridView1.CurrentRow.Cells[0].Value.ToString(), userName = dataGridView3.CurrentRow.Cells[0].Value.ToString();
             int columnIndex = dataGridView2.Columns[tableName].Index;
@@ -568,6 +596,10 @@ namespace WindowsFormsApplication1
                     break;
                 }
             }
+
+            var uprawnieniaZaznaczonego = connection.ListGrantee.Find(x => (x.UserName == chosenUser) && (x.TableName == chosenTable));
+            var mojLogin = connection.Login;
+
             String userPrivileges = dataGridView2.Rows[rowIndex].Cells[columnIndex].Value.ToString();
             if (userName == connection.Login || checkIfParent(connection.Login, userName))
                 disableAllCheckboxes();
@@ -583,6 +615,23 @@ namespace WindowsFormsApplication1
                     checkBox4.Enabled = false;
                     checkBox8.Enabled = false;
                 }
+                //warunek od Damian na usuwanie--------------------
+                if (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin && userPrivileges[0] == 's')
+                {
+                    checkBox4.Enabled = true;
+                    checkBox4.Checked = true;
+
+                    checkBox8.Enabled = true;
+                }
+                else if (uprawnieniaZaznaczonego.fromWho["SELECT"] == mojLogin && userPrivileges[0] == 'S')
+                {
+                    checkBox4.Enabled = true;
+                    checkBox4.Checked = true;
+
+                    checkBox8.Enabled = true;
+                    checkBox8.Checked = true;
+                }
+                //--------------------------------------
                 if (connection.myPrivileges.UpdateIsGrantable && userPrivileges[1] == '-')
                 {
                     checkBox3.Enabled = true;
@@ -593,6 +642,23 @@ namespace WindowsFormsApplication1
                     checkBox3.Enabled = false;
                     checkBox7.Enabled = false;
                 }
+                //warunek od Damian na usuwanie--------------------
+                if (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin && userPrivileges[1] == 'u')
+                {
+                    checkBox3.Enabled = true;
+                    checkBox3.Checked = true;
+
+                    checkBox7.Enabled = true;
+                }
+                else if (uprawnieniaZaznaczonego.fromWho["UPDATE"] == mojLogin && userPrivileges[1] == 'U')
+                {
+                    checkBox3.Enabled = true;
+                    checkBox3.Checked = true;
+
+                    checkBox7.Enabled = true;
+                    checkBox7.Checked = true;
+                }
+                //--------------------------------------
                 if (connection.myPrivileges.InsertIsGrantable && userPrivileges[2] == '-')
                 {
                     checkBox1.Enabled = true;
@@ -603,6 +669,23 @@ namespace WindowsFormsApplication1
                     checkBox1.Enabled = false;
                     checkBox5.Enabled = false;
                 }
+                //warunek od Damian na usuwanie--------------------
+                if (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin && userPrivileges[2] == 'i')
+                {
+                    checkBox1.Enabled = true;
+                    checkBox1.Checked = true;
+
+                    checkBox5.Enabled = true;
+                }
+                else if (uprawnieniaZaznaczonego.fromWho["INSERT"] == mojLogin && userPrivileges[2] == 'I')
+                {
+                    checkBox1.Enabled = true;
+                    checkBox1.Checked = true;
+
+                    checkBox5.Enabled = true;
+                    checkBox5.Checked = true;
+                }
+                //--------------------------------------
                 if (connection.myPrivileges.DeleteIsGrantable && userPrivileges[3] == '-')
                 {
                     checkBox2.Enabled = true;
@@ -613,6 +696,23 @@ namespace WindowsFormsApplication1
                     checkBox2.Enabled = false;
                     checkBox6.Enabled = false;
                 }
+                //warunek od Damian na usuwanie--------------------
+                if (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin && userPrivileges[3] == 'd')
+                {
+                    checkBox2.Enabled = true;
+                    checkBox2.Checked = true;
+
+                    checkBox6.Enabled = true;
+                }
+                else if (uprawnieniaZaznaczonego.fromWho["DELETE"] == mojLogin && userPrivileges[3] == 'D')
+                {
+                    checkBox2.Enabled = true;
+                    checkBox2.Checked = true;
+
+                    checkBox6.Enabled = true;
+                    checkBox6.Checked = true;
+                }
+                //--------------------------------------
                 if (dataGridView2.Rows[rowIndex].Cells[takeOverColumn].Value.ToString() == "-" && connection.myPrivileges.TakeOverIsGrantable)
                 {
                     checkBox9.Enabled = true;
@@ -625,6 +725,7 @@ namespace WindowsFormsApplication1
                 }
             }
         }
+
         private void takeBackPrivilege(string userName, string privilege, string tableName)//kto traci, co traci, gdzie traci
         {
             string connectionString = string.Format("Server={0}; Port={1}; database={2}; UID={3}; password={4};", connection.Server, connection.Port, connection.DatabaseName, connection.Login, connection.Password);
