@@ -611,6 +611,12 @@ namespace WindowsFormsApplication1
             String tableName = chosenTable;
             String userName = chosenUser;
 
+            if(tableName == null && userName == null)
+            {
+                disableAllCheckboxes();
+                return;
+            }
+
             int columnIndex = dataGridView2.Columns[tableName].Index;
             int takeOverColumn = dataGridView2.Columns["Przejmij"].Index;
 
@@ -763,7 +769,7 @@ namespace WindowsFormsApplication1
             var usersPrivileges = connection.GetTablePrivilegesAllUsers(tableName);
             if (privilege == "SELECT")
             {
-                //  if (connection.myPrivileges.SelectIsGrantable) //jeżeli możemy nadawać uprawnienia
+               //   if (connection.myPrivileges.SelectIsGrantable) //jeżeli możemy nadawać uprawnienia
                 foreach (var user in usersPrivileges)//sprawdzamy uprawnienia każdego użytkownika
                 {
                     if (user.Select && user.fromWho["SELECT"] == userName)//jeżeli użytkownik ma uprawnienie i ma je ode mnie
@@ -858,7 +864,7 @@ namespace WindowsFormsApplication1
 
             if (e.RowIndex >= 0)
             {
-                disableCheckboxes();
+               // disableCheckboxes();
                 chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
             }
             disableCheckboxes();
@@ -872,7 +878,7 @@ namespace WindowsFormsApplication1
 
             if (e.RowIndex >= 0)
             {
-                disableCheckboxes();
+               // disableCheckboxes();
                 chosenUser = dataGridView3.Rows[e.RowIndex].Cells["User"].Value.ToString();
             }
             disableCheckboxes();
@@ -880,15 +886,22 @@ namespace WindowsFormsApplication1
 
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //uncheck();
-
-            //if (e.RowIndex >= 0)
-            //{
-            //    disableCheckboxes();
-            //    chosenUser = dataGridView2.Rows[e.RowIndex].Cells["Login"].Value.ToString();
-            //    chosenTable = dataGridView2.Columns[e.ColumnIndex].Name.ToString();
-            //}
-            //disableCheckboxes();
+            uncheck();
+            disableAllCheckboxes();
+            //cos nie odklikuje
+            if (e.RowIndex >= 0 && e.ColumnIndex < dataGridView2.ColumnCount - 1 && e.ColumnIndex > 0)
+            {
+               // disableCheckboxes();
+                chosenUser = dataGridView2.Rows[e.RowIndex].Cells["Login"].Value.ToString();
+                chosenTable = dataGridView2.Columns[e.ColumnIndex].Name.ToString();
+            }
+            else
+            {
+                chosenUser = null;
+                chosenTable = null;
+            }
+            
+            disableCheckboxes();
         }
     }
 }
