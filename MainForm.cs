@@ -433,23 +433,6 @@ namespace WindowsFormsApplication1
                     grant("TAKEOVER", giveGrantable);
                 }
                 //Zmiana Damiana-----------------------------------
-                //zabranie praw
-                if (!checkBox4.Checked && (uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
-                {
-                    takeBackPrivilege(chosenUser, "SELECT", chosenTable);
-                }
-                if (!checkBox3.Checked && (uprawnieniaPrzekazywanemu.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
-                {
-                    takeBackPrivilege(chosenUser, "UPDATE", chosenTable);
-                }
-                if (!checkBox1.Checked && (uprawnieniaPrzekazywanemu.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
-                {
-                    takeBackPrivilege(chosenUser, "INSERT", chosenTable);
-                }
-                if (!checkBox2.Checked && (uprawnieniaPrzekazywanemu.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
-                {
-                    takeBackPrivilege(chosenUser, "DELETE", chosenTable);
-                }
                 //zabranie grantable
                 if (!checkBox8.Checked && ((uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin && uprawnieniaPrzekazywanemu.SelectIsGrantable) || ("root" == mojLogin && uprawnieniaPrzekazywanemu.SelectIsGrantable)))
                 {
@@ -470,6 +453,23 @@ namespace WindowsFormsApplication1
                 {
                     takeBackPrivilege(chosenUser, "DELETE", chosenTable);
                     grant("DELETE", false);
+                }
+                //zabranie praw
+                if (!checkBox4.Checked && (uprawnieniaPrzekazywanemu.fromWho["SELECT"] == mojLogin || mojLogin == "root"))
+                {
+                    takeBackPrivilege(chosenUser, "SELECT", chosenTable);
+                }
+                if (!checkBox3.Checked && (uprawnieniaPrzekazywanemu.fromWho["UPDATE"] == mojLogin || mojLogin == "root"))
+                {
+                    takeBackPrivilege(chosenUser, "UPDATE", chosenTable);
+                }
+                if (!checkBox1.Checked && (uprawnieniaPrzekazywanemu.fromWho["INSERT"] == mojLogin || mojLogin == "root"))
+                {
+                    takeBackPrivilege(chosenUser, "INSERT", chosenTable);
+                }
+                if (!checkBox2.Checked && (uprawnieniaPrzekazywanemu.fromWho["DELETE"] == mojLogin || mojLogin == "root"))
+                {
+                    takeBackPrivilege(chosenUser, "DELETE", chosenTable);
                 }
                 //----------------------------------------------
             }
@@ -867,6 +867,7 @@ namespace WindowsFormsApplication1
                // disableCheckboxes();
                 chosenTable = dataGridView1.Rows[e.RowIndex].Cells["TableID"].Value.ToString();
             }
+            dataGridView2.ClearSelection();
             disableCheckboxes();
         }
 
@@ -881,6 +882,7 @@ namespace WindowsFormsApplication1
                // disableCheckboxes();
                 chosenUser = dataGridView3.Rows[e.RowIndex].Cells["User"].Value.ToString();
             }
+            dataGridView2.ClearSelection();
             disableCheckboxes();
         }
 
@@ -900,7 +902,10 @@ namespace WindowsFormsApplication1
                 chosenUser = null;
                 chosenTable = null;
             }
-            
+
+            dataGridView1.ClearSelection();
+            dataGridView3.ClearSelection();
+
             disableCheckboxes();
         }
     }
