@@ -133,7 +133,7 @@ namespace WindowsFormsApplication1
                 MySqlDataReader myReader = cmd.ExecuteReader();
                 while (myReader.Read())
                 {
-                    list.Add(myReader.GetString(0));
+                    list.Add(myReader.GetString(0).ToLower());
                 }
                 myReader.Close();
             }
@@ -295,7 +295,7 @@ namespace WindowsFormsApplication1
             {
                 foreach (var table in ListTabels)
                 {
-                    list.Add(new Grantee(user, table));
+                    list.Add(new Grantee(user, table.ToLower()));
                 }
             }
 
@@ -308,7 +308,7 @@ namespace WindowsFormsApplication1
                 String userName = myReader.GetString(0).Split('@').First().Trim('\''); // myReader.GetString(0) zwraca 'user'@'localhost' Split('@') zwraca 'damian' Trim damian
                 String privilegeType = myReader.GetString(1);
                 String isGrantable = myReader.GetString(2);
-                String table = myReader.GetString(4).ToLower();
+                String table = myReader.GetString(4).ToLower(); //.ToLower()
                 String from = myReader.GetString(3);
 
                 //czy istnieje już taki
@@ -316,10 +316,10 @@ namespace WindowsFormsApplication1
                 {
                     list.Find(x => (x.UserName == userName) && (x.TableName == table)).SetPrivileges(privilegeType, isGrantable, from, table);
                 }
-                else //utworz jak nie istnieje
-                {
-                    list.Add(new Grantee(userName, privilegeType, isGrantable, from, table));
-                }
+              //  else //utworz jak nie istnieje
+            //    {
+            //        list.Add(new Grantee(userName, privilegeType, isGrantable, from, table));
+             //   }
             }
             myReader.Close();
 

@@ -50,7 +50,6 @@
             this.textBoxLogin.Name = "textBoxLogin";
             this.textBoxLogin.Size = new System.Drawing.Size(141, 20);
             this.textBoxLogin.TabIndex = 2;
-            this.textBoxLogin.Text = "root";
             // 
             // textBoxPassword
             // 

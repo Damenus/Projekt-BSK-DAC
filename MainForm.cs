@@ -246,7 +246,7 @@ namespace WindowsFormsApplication1
                     }
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(1000);
             }
         }
 
@@ -861,6 +861,14 @@ namespace WindowsFormsApplication1
 
             //  disableAllCheckboxes();
             uncheck();
+            if (chosenUser == null)
+            {
+                chosenUser = dataGridView3.Rows[0].Cells["Login"].Value.ToString();
+                dataGridView3.Rows[0].Selected = true;
+                dataGridView3.CurrentCell = dataGridView3[0, 0];
+                //dataGridView3.SelectionMode.
+            }
+
 
             if (e.RowIndex >= 0)
             {
@@ -876,6 +884,12 @@ namespace WindowsFormsApplication1
 
             //   disableAllCheckboxes();
             uncheck();
+            if (chosenTable == null)
+            {
+                chosenTable = dataGridView1.Rows[0].Cells["TableID"].Value.ToString();
+                dataGridView1.Rows[0].Selected = true;
+                dataGridView1.CurrentCell = dataGridView1[0, 0];
+            }
 
             if (e.RowIndex >= 0)
             {
