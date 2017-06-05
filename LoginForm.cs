@@ -39,7 +39,7 @@ namespace WindowsFormsApplication1
 
                 //stworzenie obiektu i łączenie się z bazą
                 connection = new DBConnection(textBoxLogin.Text, textBoxPassword.Text);
-                connection.IsConnect();
+                connection.Connect();
 
                 //ukrycie ekranu logowania i pokazanie głównego menu
                 this.Hide();
